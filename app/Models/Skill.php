@@ -6,5 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Skill extends Model
 {
-    //
+    protected $fillable = ['name'];
+
+    public function members()
+    {
+        return $this->belongsToMany(Member::class, 'member_skill');
+    }
 }
