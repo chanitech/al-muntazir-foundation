@@ -8,6 +8,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Member extends Model
 {
     use SoftDeletes;
+    protected $appends = ['photo_url'];
+
+public function getPhotoUrlAttribute()
+{
+    if (!$this->photo) {
+        return null;
+    }
+
+    return asset('storage/photos/' . $this->photo);
+}
 
     protected $fillable = [
         'user_id',

@@ -310,16 +310,19 @@ return [
             'topnav_right' => true,
         ],
 
+
         // Sidebar items:
         [
             'type' => 'sidebar-menu-search',
             'text' => 'search',
         ],
         [
-            'text' => 'blog',
-            'url' => 'admin/blog',
-            'can' => 'manage-blog',
+            'text' => 'Members',
+            'url'  => 'admin/members',
+            'icon' => 'fas fa-users',
         ],
+
+        
         [
             'text' => 'pages',
             'url' => 'admin/pages',
