@@ -12,9 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('member_professional_infos', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+    $table->id();
+    $table->foreignId('member_id')->constrained()->cascadeOnDelete();
+
+    $table->string('occupation')->nullable();
+    $table->string('employer')->nullable();
+    $table->string('work_address')->nullable();
+    $table->integer('years_of_experience')->nullable();
+
+    $table->timestamps();
+});
     }
 
     /**

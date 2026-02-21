@@ -12,9 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('member_family_infos', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+    $table->id();
+    $table->foreignId('member_id')->constrained()->cascadeOnDelete();
+
+    $table->string('father_name')->nullable();
+    $table->string('father_occupation')->nullable();
+    $table->string('mother_name')->nullable();
+    $table->string('mother_occupation')->nullable();
+    $table->string('guardian_name')->nullable();
+    $table->string('guardian_occupation')->nullable();
+
+    $table->timestamps();
+});
     }
 
     /**

@@ -12,9 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('member_academic_backgrounds', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+    $table->id();
+    $table->foreignId('member_id')->constrained()->cascadeOnDelete();
+
+    $table->string('institution_name');
+    $table->string('education_level');
+    $table->year('start_year')->nullable();
+    $table->year('end_year')->nullable();
+    $table->string('certificate_file')->nullable();
+
+    $table->timestamps();
+});
     }
 
     /**
