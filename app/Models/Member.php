@@ -8,16 +8,29 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Member extends Model
 {
     use SoftDeletes;
+
+    protected $table = 'members';
+
     protected $appends = ['photo_url'];
 
-public function getPhotoUrlAttribute()
-{
-    if (!$this->photo) {
-        return null;
+    /*
+    |--------------------------------------------------------------------------
+    | Accessors
+    |--------------------------------------------------------------------------
+    */
+
+    public function getPhotoUrlAttribute()
+    {
+        return $this->photo
+            ? asset('storage/photos/' . $this->photo)
+            : null;
     }
 
-    return asset('storage/photos/' . $this->photo);
-}
+    /*
+    |--------------------------------------------------------------------------
+    | Fillable
+    |--------------------------------------------------------------------------
+    */
 
     protected $fillable = [
         'user_id',
@@ -42,6 +55,12 @@ public function getPhotoUrlAttribute()
         'children_count'
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | Casts
+    |--------------------------------------------------------------------------
+    */
+
     protected $casts = [
         'date_of_birth' => 'date',
         'join_date' => 'date',
@@ -49,7 +68,7 @@ public function getPhotoUrlAttribute()
 
     /*
     |--------------------------------------------------------------------------
-    | RELATIONSHIPS
+    | Relationships
     |--------------------------------------------------------------------------
     */
 
@@ -83,17 +102,20 @@ public function getPhotoUrlAttribute()
         return $this->belongsToMany(Skill::class, 'member_skill');
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Membership Generator
+    |--------------------------------------------------------------------------
+    */
+
     public static function generateMembershipNumber()
-{
-    $lastMember = self::latest('id')->first();
+    {
+        $lastMember = self::latest('id')->first();
 
-    if (!$lastMember) {
-        $number = 1;
-    } else {
-        $lastNumber = (int) substr($lastMember->membership_number, -6);
-        $number = $lastNumber + 1;
+        $number = $lastMember
+            ? ((int) substr($lastMember->membership_number, -6)) + 1
+            : 1;
+
+        return 'AYFC-' . str_pad($number, 6, '0', STR_PAD_LEFT);
     }
-
-    return 'AYFC-' . str_pad($number, 6, '0', STR_PAD_LEFT);
-}
 }

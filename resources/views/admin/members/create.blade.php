@@ -3,7 +3,7 @@
 @section('title','Create Member')
 
 @section('content_header')
-<h1>Create Member</h1>
+<h1>Member Registration</h1>
 @stop
 
 @section('content')
@@ -11,45 +11,109 @@
 <div class="card card-primary">
 
 <div class="card-header">
-<h3 class="card-title">Member Registration</h3>
+<h3 class="card-title">New Member Form</h3>
 </div>
 
-<form action="{{ route('admin.members.store') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('admin.members.store') }}"
+      method="POST"
+      enctype="multipart/form-data">
+
 @csrf
 
 <div class="card-body">
 
-{{-- Tabs Navigation --}}
-<ul class="nav nav-tabs" id="memberTab">
+{{-- ============================= --}}
+{{-- Membership Section --}}
+{{-- ============================= --}}
+<h5 class="text-primary mb-3">Membership Information</h5>
 
-<li class="nav-item">
-<a class="nav-link active" data-toggle="tab" href="#personal">Personal Info</a>
-</li>
+<div class="row">
 
-<li class="nav-item">
-<a class="nav-link" data-toggle="tab" href="#family">Family Info</a>
-</li>
+<div class="col-md-6 form-group">
+<label>Membership Number</label>
+<input name="membership_number"
+       class="form-control"
+       value="{{ \App\Models\Member::generateMembershipNumber() }}"
+       readonly>
+</div>
 
-<li class="nav-item">
-<a class="nav-link" data-toggle="tab" href="#academic">Academic</a>
-</li>
+<div class="col-md-6 form-group">
+<label>Join Date *</label>
+<input type="date" name="join_date"
+       class="form-control" required>
+</div>
 
-<li class="nav-item">
-<a class="nav-link" data-toggle="tab" href="#professional">Professional</a>
-</li>
+<div class="col-md-6 form-group">
+<label>Membership Type *</label>
 
-</ul>
+<select name="membership_type_id"
+        class="form-control" required>
 
-<div class="tab-content mt-3">
+<option value="">Select Type</option>
 
-{{-- ================= PERSONAL TAB ================= --}}
-<div class="tab-pane fade show active" id="personal">
+@foreach($membershipTypes as $type)
+<option value="{{ $type->id }}">
+{{ $type->name }}
+</option>
+@endforeach
+
+</select>
+</div>
+
+<div class="col-md-6 form-group">
+<label>Status</label>
+
+<select name="status" class="form-control">
+<option value="Active">Active</option>
+<option value="Inactive">Inactive</option>
+</select>
+
+</div>
+
+</div>
+
+<hr>
+
+{{-- ============================= --}}
+{{-- Personal Information --}}
+{{-- ============================= --}}
+<h5 class="text-primary mb-3">Personal Information</h5>
 
 <div class="row">
 
 <div class="col-md-6 form-group">
 <label>Full Name *</label>
 <input name="full_name" class="form-control" required>
+</div>
+
+<div class="col-md-6 form-group">
+<label>Date of Birth</label>
+<input type="date" name="date_of_birth" class="form-control">
+</div>
+
+<div class="col-md-6 form-group">
+<label>Place of Birth</label>
+<input name="place_of_birth" class="form-control">
+</div>
+
+<div class="col-md-6 form-group">
+<label>Nationality</label>
+<input name="nationality" class="form-control">
+</div>
+
+<div class="col-md-6 form-group">
+<label>Religion</label>
+<input name="religion" class="form-control">
+</div>
+
+<div class="col-md-6 form-group">
+<label>Tribe</label>
+<input name="tribe" class="form-control">
+</div>
+
+<div class="col-md-6 form-group">
+<label>National ID</label>
+<input name="national_id" class="form-control">
 </div>
 
 <div class="col-md-6 form-group">
@@ -62,66 +126,71 @@
 <input name="email" class="form-control">
 </div>
 
-<div class="col-md-6 form-group">
-<label>Date of Birth</label>
-<input type="date" name="date_of_birth" class="form-control">
-</div>
-
 <div class="col-md-12 form-group">
 <label>Address</label>
 <textarea name="address" class="form-control"></textarea>
 </div>
 
-<div class="col-md-6 form-group">
-<label>Photo</label>
-<input type="file" name="photo" class="form-control">
 </div>
 
-</div>
+<hr>
 
-</div>
-
-{{-- ================= FAMILY TAB ================= --}}
-<div class="tab-pane fade" id="family">
+{{-- ============================= --}}
+{{-- Marital & Family Section --}}
+{{-- ============================= --}}
+<h5 class="text-primary mb-3">Family Information</h5>
 
 <div class="row">
 
 <div class="col-md-6 form-group">
-<label>Father Name</label>
-<input name="father_name" class="form-control">
+<label>Marital Status</label>
+
+<select name="marital_status_id" class="form-control">
+<option value="">None</option>
+
+@foreach($maritalStatuses as $status)
+<option value="{{ $status->id }}">
+{{ $status->name }}
+</option>
+@endforeach
+
+</select>
 </div>
 
 <div class="col-md-6 form-group">
-<label>Father Occupation</label>
-<input name="father_occupation" class="form-control">
+<label>Spouse Name</label>
+<input name="spouse_name" class="form-control">
 </div>
 
 <div class="col-md-6 form-group">
-<label>Mother Name</label>
-<input name="mother_name" class="form-control">
+<label>Spouse Phone</label>
+<input name="spouse_phone" class="form-control">
 </div>
 
 <div class="col-md-6 form-group">
-<label>Mother Occupation</label>
-<input name="mother_occupation" class="form-control">
+<label>Children Count</label>
+<input type="number"
+       name="children_count"
+       class="form-control"
+       value="0">
 </div>
 
 </div>
 
-</div>
+<hr>
 
-{{-- ================= ACADEMIC TAB ================= --}}
-<div class="tab-pane fade" id="academic">
+{{-- ============================= --}}
+{{-- Photo Upload --}}
+{{-- ============================= --}}
+<h5 class="text-primary mb-3">Profile Photo</h5>
 
-<p class="text-muted">You can add academic records later from profile page.</p>
+<div class="row">
 
-</div>
-
-{{-- ================= PROFESSIONAL TAB ================= --}}
-<div class="tab-pane fade" id="professional">
-
-<p class="text-muted">Professional experience can be added later.</p>
-
+<div class="col-md-6 form-group">
+<label>Photo</label>
+<input type="file"
+       name="photo"
+       class="form-control">
 </div>
 
 </div>
@@ -133,7 +202,8 @@
 Save Member
 </button>
 
-<a href="{{ route('admin.members.index') }}" class="btn btn-secondary">
+<a href="{{ route('admin.members.index') }}"
+   class="btn btn-secondary">
 Cancel
 </a>
 </div>
@@ -142,15 +212,4 @@ Cancel
 
 </div>
 
-@stop
-
-@section('js')
-<script>
-$(function(){
-    $('#memberTab a').click(function (e) {
-        e.preventDefault()
-        $(this).tab('show')
-    })
-})
-</script>
 @stop

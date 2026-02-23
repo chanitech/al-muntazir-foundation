@@ -298,104 +298,63 @@ return [
     |
     */
 
-    'menu' => [
-        // Navbar items:
-        [
-            'type' => 'navbar-search',
-            'text' => 'search',
-            'topnav_right' => true,
-        ],
-        [
-            'type' => 'fullscreen-widget',
-            'topnav_right' => true,
-        ],
+'menu' => [
 
-
-        // Sidebar items:
-        [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
-        ],
-        [
-            'text' => 'Members',
-            'url'  => 'admin/members',
-            'icon' => 'fas fa-users',
-        ],
-
-        
-        [
-            'text' => 'pages',
-            'url' => 'admin/pages',
-            'icon' => 'far fa-fw fa-file',
-            'label' => 4,
-            'label_color' => 'success',
-        ],
-        ['header' => 'account_settings'],
-        [
-            'text' => 'profile',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        [
-            'text' => 'multilevel',
-            'icon' => 'fas fa-fw fa-share',
-            'submenu' => [
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
-            ],
-        ],
-        ['header' => 'labels'],
-        [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
-        ],
-        [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
-        ],
-        [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
-        ],
+    [
+        'type' => 'navbar-search',
+        'text' => 'Search',
+        'topnav_right' => true,
     ],
+
+    [
+        'type' => 'fullscreen-widget',
+        'topnav_right' => true,
+    ],
+
+    [
+        'type' => 'sidebar-menu-search',
+        'text' => 'Search'
+    ],
+
+    ['header' => 'MEMBER MANAGEMENT'],
+
+    [
+        'text' => 'Members',
+        'url'  => 'admin/members',
+        'icon' => 'fas fa-users'
+    ],
+
+    ['header' => 'ELECTION SYSTEM'],
+
+    [
+        'text' => 'Elections',
+        'url'  => 'admin/elections',
+        'icon' => 'fas fa-vote-yea'
+    ],
+
+    [
+        'text' => 'Candidates',
+        'url' => 'admin/candidates',
+        'icon' => 'fas fa-user-check'
+    ],
+
+    [
+        'text' => 'Positions',
+        'url' => 'admin/positions',
+        'icon' => 'fas fa-sitemap'
+    ],
+
+    [
+        'text' => 'Voting',
+        'url' => 'admin/voting',
+        'icon' => 'fas fa-vote-yea'
+    ],
+     [
+                'text' => 'Analytics Dashboard',
+                'url' => 'admin/voting/analytics/1'
+            ]
+
+],
 
     /*
     |--------------------------------------------------------------------------
