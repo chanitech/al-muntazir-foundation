@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\VotingController;
 use App\Http\Controllers\Admin\ElectionController;
 use App\Http\Controllers\Admin\CandidateController;
 use App\Http\Controllers\Admin\PositionController;
+use App\Http\Controllers\EventController;
 
 /*
 |--------------------------------------------------------------------------
@@ -152,5 +153,10 @@ Route::middleware('auth')
             ->names('positions');
 
     });
+
+    Route::resource('admin/events', EventController::class);
+    Route::prefix('admin')->group(function () {
+    Route::resource('event-categories', \App\Http\Controllers\EventCategoryController::class);
+});
 
 require __DIR__.'/auth.php';

@@ -301,6 +301,34 @@ return [
 'menu' => [
 
     [
+    'text' => 'Events Management',
+    'icon' => 'fas fa-calendar',
+
+    'submenu' => [
+        [
+            'text' => 'Event List',
+            'url'  => 'admin/events',
+            'icon' => 'far fa-circle'
+        ],
+        [
+            'text' => 'Add Event',
+            'url'  => 'events/create',
+            'icon' => 'far fa-circle'
+        ],
+        [
+    'text' => 'Event Categories',
+    'url'  => 'admin/event-categories',
+    'icon' => 'fas fa-tags',
+],
+[
+    'text' => 'Events',
+    'url'  => 'admin/events',
+    'icon' => 'fas fa-calendar-alt',
+],
+    ]
+],
+
+    [
         'type' => 'navbar-search',
         'text' => 'Search',
         'topnav_right' => true,
@@ -354,7 +382,14 @@ return [
                 'url' => 'admin/voting/analytics/1'
             ]
 
+
+            
+
 ],
+
+
+
+
 
     /*
     |--------------------------------------------------------------------------
