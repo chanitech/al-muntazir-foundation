@@ -10,6 +10,12 @@ class Event extends Model
 {
     use HasFactory, SoftDeletes;
 
+    /**
+     * Statuses an event can have. The admin create/edit forms and the
+     * EventController validation rules both read this list, so they stay in sync.
+     */
+    public const STATUSES = ['upcoming', 'ongoing', 'completed', 'cancelled', 'draft'];
+
     protected $fillable = [
         'event_category_id',
         'title',
