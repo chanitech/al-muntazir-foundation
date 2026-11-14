@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class Member extends Model
 {
@@ -11,33 +15,30 @@ class Member extends Model
 
     protected $table = 'members';
 
-    protected $appends = ['photo_url'];
-
     /*
     |--------------------------------------------------------------------------
-    | Accessors
+    | Appends
     |--------------------------------------------------------------------------
     */
 
-    public function getPhotoUrlAttribute()
-    {
-        return $this->photo
-            ? asset('storage/photos/' . $this->photo)
-            : null;
-    }
+    protected $appends = [
+        'photo_url'
+    ];
 
     /*
     |--------------------------------------------------------------------------
-    | Fillable
+    | Fillable Fields
     |--------------------------------------------------------------------------
     */
 
     protected $fillable = [
+
         'user_id',
         'membership_number',
         'join_date',
         'membership_type_id',
         'status',
+
         'full_name',
         'date_of_birth',
         'place_of_birth',
@@ -45,25 +46,42 @@ class Member extends Model
         'religion',
         'tribe',
         'national_id',
+
         'phone',
         'email',
         'address',
         'photo',
+
         'marital_status_id',
         'spouse_name',
         'spouse_phone',
-        'children_count'
+        'children_count',
+
+        /*
+        Wizard JSON Storage (Enterprise Friendly)
+        */
+
+        'family_info',
+        'academic_history',
+        'professional_history'
     ];
 
     /*
     |--------------------------------------------------------------------------
-    | Casts
+    | Casting
     |--------------------------------------------------------------------------
     */
 
     protected $casts = [
+
         'date_of_birth' => 'date',
         'join_date' => 'date',
+
+        'children_count' => 'integer',
+
+        'family_info' => 'array',
+        'academic_history' => 'array',
+        'professional_history' => 'array'
     ];
 
     /*
@@ -82,21 +100,6 @@ class Member extends Model
         return $this->belongsTo(MaritalStatus::class);
     }
 
-    public function familyInfo()
-    {
-        return $this->hasOne(MemberFamilyInfo::class);
-    }
-
-    public function academicBackgrounds()
-    {
-        return $this->hasMany(MemberAcademicBackground::class);
-    }
-
-    public function professionalInfos()
-    {
-        return $this->hasMany(MemberProfessionalInfo::class);
-    }
-
     public function skills()
     {
         return $this->belongsToMany(Skill::class, 'member_skill');
@@ -104,18 +107,58 @@ class Member extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | Membership Generator
+    | Photo URL Accessor
     |--------------------------------------------------------------------------
     */
 
-    public static function generateMembershipNumber()
+    protected function photoUrl(): Attribute
     {
-        $lastMember = self::latest('id')->first();
+        return Attribute::get(function () {
 
-        $number = $lastMember
-            ? ((int) substr($lastMember->membership_number, -6)) + 1
-            : 1;
+            if (!$this->photo) {
+                return asset('images/default.png');
+            }
 
-        return 'AYFC-' . str_pad($number, 6, '0', STR_PAD_LEFT);
+            return asset('storage/photos/'.$this->photo);
+        });
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Membership Number Generator (Concurrency Safe ⭐⭐⭐⭐⭐)
+    |--------------------------------------------------------------------------
+    */
+
+    /*
+|--------------------------------------------------------------------------
+| Membership Number Generator (Enterprise Safe)
+|--------------------------------------------------------------------------
+*/
+
+public static function generateMembershipNumber(): string
+{
+    // This must run inside an existing transaction
+    $last = self::lockForUpdate()
+        ->orderBy('id', 'desc')
+        ->first();
+
+    $nextNumber = 1;
+
+    if ($last && $last->membership_number) {
+        $lastNumber = (int) Str::substr($last->membership_number, -6);
+        $nextNumber = $lastNumber + 1;
+    }
+
+    return 'AYFC-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+}
+
+public function academicCount(): int
+{
+    return collect($this->academic_history ?? [])->count();
+}
+
+public function professionalCount(): int
+{
+    return collect($this->professional_history ?? [])->count();
+}
 }

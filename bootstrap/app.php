@@ -14,8 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-        'vote.guard' => \App\Http\Middleware\VoteIntegrityMiddleware::class,
-    ]);
+            'vote.guard' => \App\Http\Middleware\VoteIntegrityMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class, // Added for role permissions
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

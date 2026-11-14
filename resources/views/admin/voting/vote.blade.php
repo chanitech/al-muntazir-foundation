@@ -8,14 +8,13 @@
     {{ $election->name }}
 </h3>
 
-{{-- Success Message --}}
+{{-- Messages --}}
 @if(session('success'))
 <div class="alert alert-success alert-dismissible fade show">
     {{ session('success') }}
 </div>
 @endif
 
-{{-- Validation Errors --}}
 @if ($errors->any())
 <div class="alert alert-danger">
 <ul>
@@ -26,11 +25,8 @@
 </div>
 @endif
 
-{{-- Voting Form --}}
 <form action="{{ route('voting.store') }}" method="POST">
-
 @csrf
-@method('POST')
 
 <input type="hidden" name="election_id" value="{{ $election->id }}">
 
@@ -44,6 +40,7 @@
 $position = \App\Models\Position::find($positionId);
 @endphp
 
+{{-- Position Header --}}
 <h5 class="text-primary mt-4 border-bottom pb-2">
     {{ $position->name ?? 'Position' }}
 </h5>
@@ -52,11 +49,46 @@ $position = \App\Models\Position::find($positionId);
 
 @foreach($candidateGroup as $candidate)
 
-<div class="col-md-6">
+@php
+$member = $candidate->member;
+@endphp
 
-<div class="card border p-3 mb-2 shadow-sm">
+<div class="col-md-4 mb-3">
 
-<div class="form-check">
+<div class="card shadow-sm border h-100">
+
+<div class="card-body text-center">
+
+{{-- Candidate Photo --}}
+<img
+src="{{ $member->photo_url ?? asset('images/default.png') }}"
+class="img-fluid rounded-circle mb-3"
+style="width:200px;height:200px;object-fit:cover">
+
+{{-- Candidate Name --}}
+<h2 class="font-weight-bold">
+{{ $member->full_name ?? 'Candidate' }}
+</h2>
+
+{{-- Manifesto Preview --}}
+@if(!empty($candidate->manifesto))
+<p class="text-muted medium">
+{{ \Illuminate\Support\Str::limit($candidate->manifesto, 120) }}
+</p>
+@endif
+
+{{-- Vote Percentage --}}
+@if(isset($candidate->vote_percentage))
+<div class="progress mb-2">
+<div class="progress-bar"
+style="width: {{ $candidate->vote_percentage }}%">
+{{ $candidate->vote_percentage }}%
+</div>
+</div>
+@endif
+
+{{-- Vote Selection --}}
+<div class="form-check mt-2">
 
 <input class="form-check-input"
 type="radio"
@@ -65,13 +97,12 @@ value="{{ $candidate->id }}"
 required>
 
 <label class="form-check-label">
-<strong>
-{{ $candidate->member->full_name ?? 'Candidate' }}
-</strong>
+Select Candidate
 </label>
 
 </div>
 
+</div>
 </div>
 
 </div>
@@ -90,8 +121,8 @@ No candidates available for voting.
 
 </div>
 
-<div class="card-footer">
-<button type="submit" class="btn btn-success">
+<div class="card-footer text-right">
+<button type="submit" class="btn btn-success px-4">
 <i class="fas fa-check"></i> Submit Vote
 </button>
 </div>

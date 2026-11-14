@@ -80,7 +80,7 @@ class CandidateController extends Controller
             'election_id' => $request->election_id,
             'position_id' => $request->position_id,
             'manifesto' => $request->manifesto,
-            'is_approved' => false
+            'is_approved' => true
         ]);
 
         return redirect()
