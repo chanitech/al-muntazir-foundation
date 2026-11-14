@@ -9,8 +9,14 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-     public function up(): void
+    public function up(): void
     {
+        // Also defined (as an id/timestamps placeholder, now a no-op) by
+        // 2026_02_23_232822_create_document_downloads_table.
+        if (Schema::hasTable('document_downloads')) {
+            return;
+        }
+
         Schema::create('document_downloads', function (Blueprint $table) {
 
             $table->id();

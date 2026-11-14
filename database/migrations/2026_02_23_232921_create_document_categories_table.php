@@ -11,6 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Also defined (as an id/timestamps placeholder, now a no-op) by
+        // 2026_02_23_232822_create_document_categories_table.
+        if (Schema::hasTable('document_categories')) {
+            return;
+        }
+
         Schema::create('document_categories', function (Blueprint $table) {
             $table->id();
 
