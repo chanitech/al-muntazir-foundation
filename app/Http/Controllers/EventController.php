@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\EventCategory;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Jobs\SendEventSmsJob;
 
 class EventController extends Controller
@@ -32,7 +33,7 @@ class EventController extends Controller
             'end_time' => 'nullable',
             'location' => 'nullable|string',
             'capacity' => 'nullable|integer',
-            'status' => 'required|in:upcoming,draft,completed,cancelled',
+            'status' => ['required', Rule::in(Event::STATUSES)],
             'sms_template' => 'nullable|string'
         ]);
 
@@ -64,7 +65,7 @@ class EventController extends Controller
             'end_time' => 'nullable',
             'location' => 'nullable|string',
             'capacity' => 'nullable|integer',
-            'status' => 'required|in:upcoming,ongoing,completed,cancelled,draft',
+            'status' => ['required', Rule::in(Event::STATUSES)],
             'sms_template' => 'nullable|string'
         ]);
 

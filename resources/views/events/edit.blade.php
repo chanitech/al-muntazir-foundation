@@ -37,7 +37,7 @@ class="form-control">
 <label>Status</label>
 <select name="status" class="form-control">
 
-@foreach(['upcoming','ongoing','completed','cancelled'] as $status)
+@foreach(\App\Models\Event::STATUSES as $status)
 
 <option value="{{ $status }}"
 @if($event->status==$status) selected @endif>
