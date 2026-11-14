@@ -2,13 +2,15 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesWebsiteDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
+    use RefreshesWebsiteDatabase;
+
     /**
-     * A basic test example.
+     * The homepage (public website) loads.
      */
     public function test_the_application_returns_a_successful_response(): void
     {
