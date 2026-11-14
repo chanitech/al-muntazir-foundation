@@ -239,7 +239,7 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('permission:change password');   // Added
 
     Route::post('/password/change', [PasswordController::class, 'update'])
-        ->name('password.update')
+        ->name('password.change.update')
         ->middleware('permission:change password');   // Added
 });
 

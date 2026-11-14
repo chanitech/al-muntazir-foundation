@@ -32,7 +32,7 @@
 
     <div class="card-body">
 
-        <form method="POST" action="{{ route('password.update') }}">
+        <form method="POST" action="{{ route('password.change.update') }}">
             @csrf
 
             <div class="form-group mb-3">
