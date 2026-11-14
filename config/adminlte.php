@@ -37,12 +37,12 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'logo' => '<b>AYFC</b> Database',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+    'logo' => '<b>AYFC</b> Admin',
+    'logo_img' => 'images/logo.jpg',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Admin Logo',
+    'logo_img_alt' => 'AYFC Logo',
 
     /*
     |--------------------------------------------------------------------------
@@ -51,13 +51,13 @@ return [
     */
 
     'auth_logo' => [
-        'enabled' => false,
+        'enabled' => true,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-            'alt' => 'Auth Logo',
-            'class' => '',
-            'width' => 100,
-            'height' => 100,
+            'path' => 'images/logo.jpg',
+            'alt' => 'AYFC Logo',
+            'class' => 'img-circle',
+            'width' => 90,
+            'height' => 90,
         ],
     ],
 
@@ -71,11 +71,11 @@ return [
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-            'alt' => 'AdminLTE Preloader Image',
-            'effect' => 'animation__shake',
-            'width' => 400,
-            'height' => 400,
+            'path' => 'images/logo.jpg',
+            'alt' => 'AYFC Logo',
+            'effect' => 'animation__wobble',
+            'width' => 90,
+            'height' => 90,
         ],
     ],
 
@@ -173,7 +173,7 @@ return [
     */
 
     'use_route_url' => false,
-    'dashboard_url' => 'home',
+    'dashboard_url' => 'dashboard',
     'logout_url' => 'logout',
     'login_url' => 'login',
     'register_url' => 'register',
@@ -199,6 +199,15 @@ return [
     */
 
     'menu' => [
+
+    // Top bar: open the public website in a new tab
+    [
+        'text' => 'View Website',
+        'url' => '/',
+        'icon' => 'fas fa-external-link-alt',
+        'topnav_right' => true,
+        'target' => '_blank',
+    ],
 
     // Dashboard
     [
@@ -238,7 +247,7 @@ return [
     [
         'text' => 'Events',
         'icon' => 'fas fa-calendar-alt',
-        'can' => 'view event',
+        'can' => 'view events',
         'submenu' => [
             [
                 'text' => 'Event List',
@@ -323,6 +332,28 @@ return [
         ],
     ],
 
+    // Public Website content (sliders, pages, news...). The "Website Messages"
+    // item with its unread counter is added right after this one in
+    // AppServiceProvider (it needs a live count from the database).
+    [
+        'key' => 'website',
+        'text' => 'Website',
+        'icon' => 'fas fa-globe-africa',
+        'can' => 'manage website',
+        'submenu' => [
+            ['text' => 'Site Settings', 'route' => 'admin.settings.edit', 'icon' => 'fas fa-sliders-h', 'can' => 'manage website', 'active' => ['admin/website-settings*']],
+            ['text' => 'Homepage Slider', 'route' => 'admin.sliders.index', 'icon' => 'fas fa-images', 'can' => 'manage website', 'active' => ['admin/sliders*']],
+            ['text' => 'Programs', 'route' => 'admin.programs.index', 'icon' => 'fas fa-hands-helping', 'can' => 'manage website', 'active' => ['admin/programs*']],
+            ['text' => 'News & Articles', 'route' => 'admin.posts.index', 'icon' => 'fas fa-newspaper', 'can' => 'manage website', 'active' => ['admin/news*']],
+            ['text' => 'Team', 'route' => 'admin.team.index', 'icon' => 'fas fa-user-tie', 'can' => 'manage website', 'active' => ['admin/team*']],
+            ['text' => 'Testimonials', 'route' => 'admin.testimonials.index', 'icon' => 'fas fa-quote-left', 'can' => 'manage website', 'active' => ['admin/testimonials*']],
+            ['text' => 'Photo Gallery', 'route' => 'admin.gallery.index', 'icon' => 'fas fa-camera', 'can' => 'manage website', 'active' => ['admin/gallery*']],
+            ['text' => 'Partners', 'route' => 'admin.partners.index', 'icon' => 'fas fa-handshake', 'can' => 'manage website', 'active' => ['admin/partners*']],
+            ['text' => 'Impact Numbers', 'route' => 'admin.stats.index', 'icon' => 'fas fa-chart-bar', 'can' => 'manage website', 'active' => ['admin/impact-stats*']],
+            ['text' => 'Newsletter Subscribers', 'route' => 'admin.subscribers.index', 'icon' => 'fas fa-at', 'can' => 'manage website', 'active' => ['admin/subscribers*']],
+        ],
+    ],
+
     // Account Settings
     [
         'text' => 'Account Settings',
@@ -368,6 +399,21 @@ return [
     */
 
     'plugins' => [
+        // Styles for the Website section of the admin panel (always loaded).
+        'WebsiteAdmin' => [
+            'active' => true,
+            'files' => [
+                ['type' => 'css', 'asset' => true, 'location' => 'css/admin-website.css'],
+            ],
+        ],
+        // Rich-text editor for news articles and program pages (self-hosted).
+        'Summernote' => [
+            'active' => false,
+            'files' => [
+                ['type' => 'css', 'asset' => true, 'location' => 'vendor/summernote/summernote-bs4.min.css'],
+                ['type' => 'js', 'asset' => true, 'location' => 'vendor/summernote/summernote-bs4.min.js'],
+            ],
+        ],
         'Datatables' => [
             'active' => false,
             'files' => [

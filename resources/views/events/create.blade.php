@@ -10,7 +10,7 @@
 <h4>Create Event</h4>
 </div>
 
-<form method="POST" action="{{ route('events.store') }}">
+<form method="POST" action="{{ route('events.store') }}" enctype="multipart/form-data">
 @csrf
 
 <div class="card-body">
@@ -87,6 +87,8 @@
 </select>
 
 </div>
+
+@include('events._website-fields', ['event' => null])
 
 <hr>
 

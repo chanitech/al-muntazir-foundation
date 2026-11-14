@@ -64,6 +64,10 @@
 
 </div>
 
+@can('manage website')
+    @include('admin.website._dashboard')
+@endcan
+
 <!-- Latest Members Table -->
 <div class="card shadow mt-4">
     <div class="card-header">

@@ -16,6 +16,14 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MembershipTypeController;
 use App\Http\Controllers\Admin\AcademicInstitutionController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\Admin\Website;
+use App\Http\Controllers\Website\ContactController;
+use App\Http\Controllers\Website\EventController as WebsiteEventController;
+use App\Http\Controllers\Website\HomeController;
+use App\Http\Controllers\Website\NewsController;
+use App\Http\Controllers\Website\NewsletterController;
+use App\Http\Controllers\Website\PageController;
+use App\Http\Controllers\Website\ProgramController as WebsiteProgramController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,9 +31,64 @@ use App\Http\Controllers\LocationController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return view('auth.login');
+Route::get('/', HomeController::class)->name('home');
+
+Route::name('site.')->group(function () {
+    Route::get('/about', [PageController::class, 'about'])->name('about');
+    Route::get('/programs', [WebsiteProgramController::class, 'index'])->name('programs.index');
+    Route::get('/programs/{program}', [WebsiteProgramController::class, 'show'])->name('programs.show');
+    Route::get('/news', [NewsController::class, 'index'])->name('news.index');
+    Route::get('/news/{post}', [NewsController::class, 'show'])->name('news.show');
+    Route::get('/events', [WebsiteEventController::class, 'index'])->name('events.index');
+    Route::get('/events/{event}', [WebsiteEventController::class, 'show'])->whereNumber('event')->name('events.show');
+    Route::get('/gallery', [PageController::class, 'gallery'])->name('gallery');
+    Route::get('/contact', [ContactController::class, 'show'])->name('contact');
+    Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
+    Route::post('/newsletter', [NewsletterController::class, 'store'])->middleware('throttle:10,1')->name('newsletter');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Admin: Website content (Admin → Website)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'permission:manage website'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('website-settings', [Website\SettingController::class, 'edit'])->name('settings.edit');
+        Route::put('website-settings', [Website\SettingController::class, 'update'])->name('settings.update');
+
+        $modules = [
+            // uri         => [route name,  controller]
+            'sliders' => ['sliders', Website\SliderController::class],
+            'programs' => ['programs', Website\ProgramController::class],
+            'news' => ['posts', Website\PostController::class],
+            'team' => ['team', Website\TeamMemberController::class],
+            'testimonials' => ['testimonials', Website\TestimonialController::class],
+            'gallery' => ['gallery', Website\GalleryItemController::class],
+            'partners' => ['partners', Website\PartnerController::class],
+            'impact-stats' => ['stats', Website\ImpactStatController::class],
+        ];
+
+        foreach ($modules as $uri => [$name, $controller]) {
+            Route::resource($uri, $controller)->except('show')->names($name)->parameters([$uri => 'id']);
+            Route::patch("{$uri}/{id}/toggle", [$controller, 'toggle'])->name("{$name}.toggle");
+        }
+
+        Route::get('messages', [Website\ContactMessageController::class, 'index'])->name('messages.index');
+        Route::post('messages/mark-all-read', [Website\ContactMessageController::class, 'markAllRead'])->name('messages.mark-all-read');
+        Route::get('messages/{message}', [Website\ContactMessageController::class, 'show'])->name('messages.show');
+        Route::patch('messages/{message}/unread', [Website\ContactMessageController::class, 'markUnread'])->name('messages.unread');
+        Route::delete('messages/{message}', [Website\ContactMessageController::class, 'destroy'])->name('messages.destroy');
+
+        Route::get('subscribers', [Website\SubscriberController::class, 'index'])->name('subscribers.index');
+        Route::get('subscribers/export', [Website\SubscriberController::class, 'export'])->name('subscribers.export');
+        Route::delete('subscribers/{subscriber}', [Website\SubscriberController::class, 'destroy'])->name('subscribers.destroy');
+
+        Route::post('editor-upload', Website\EditorUploadController::class)->name('editor.upload');
+    });
 
 /*
 |--------------------------------------------------------------------------
