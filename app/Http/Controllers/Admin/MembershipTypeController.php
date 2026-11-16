@@ -60,7 +60,7 @@ public function store(Request $request)
 */
 public function edit(MembershipType $membershipType)
 {
-    return view('admin.membership_types.form',
+    return view('admin.membership_types.create',
         compact('membershipType'));
 }
 

@@ -90,6 +90,22 @@ class CandidateController extends Controller
 
     /*
     |--------------------------------------------------------------------------
+    | Remove a nomination (only while it has no votes)
+    |--------------------------------------------------------------------------
+    */
+    public function destroy(Candidate $candidate)
+    {
+        if ($candidate->votes()->exists()) {
+            return back()->withErrors(['error' => 'This candidate already has votes and cannot be removed.']);
+        }
+
+        $candidate->delete();
+
+        return back()->with('success', 'Nomination removed.');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | Candidate Approval (Admin Only)
     |--------------------------------------------------------------------------
     */

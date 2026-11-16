@@ -7,15 +7,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('members', function (Blueprint $table) {
-
-            $table->json('academic_history')->nullable()->after('photo');
-
-            $table->json('professional_history')->nullable()->after('academic_history');
-
-            $table->json('family_info')->nullable()->after('professional_history');
-
-        });
+        foreach (['academic_history', 'professional_history', 'family_info'] as $column) {
+            if (! Schema::hasColumn('members', $column)) {
+                Schema::table('members', fn (Blueprint $table) => $table->json($column)->nullable());
+            }
+        }
     }
 
     public function down(): void

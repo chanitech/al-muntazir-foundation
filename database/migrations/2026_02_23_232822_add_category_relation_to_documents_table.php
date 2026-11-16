@@ -7,18 +7,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('documents', function (Blueprint $table) {
+        // Dated before the documents table is created: on a fresh install the
+        // column is created together with the table instead.
+        if (! Schema::hasTable('documents') || ! Schema::hasTable('document_categories')) {
+            return;
+        }
 
-            if (!Schema::hasColumn('documents','document_category_id')) {
-
+        if (! Schema::hasColumn('documents', 'document_category_id')) {
+            Schema::table('documents', function (Blueprint $table) {
                 $table->foreignId('document_category_id')
-                      ->after('id')
+                      ->nullable()
                       ->constrained('document_categories')
                       ->cascadeOnDelete();
-
-            }
-
-        });
+            });
+        }
     }
 
     public function down(): void

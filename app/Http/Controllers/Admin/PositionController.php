@@ -23,7 +23,7 @@ class PositionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'=>'required'
+            'name'=>'required|string|max:255|unique:positions,name'
         ]);
 
         Position::create([
@@ -43,7 +43,7 @@ class PositionController extends Controller
     public function update(Request $request, Position $position)
     {
         $request->validate([
-            'name'=>'required'
+            'name'=>'required|string|max:255|unique:positions,name,'.$position->id
         ]);
 
         $position->update([

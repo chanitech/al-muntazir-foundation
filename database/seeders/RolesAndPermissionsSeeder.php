@@ -31,6 +31,7 @@ public function run()
         'vote', 'view voting analytics',
         'change password',
         'view roles', 'create roles', 'edit roles', 'delete roles',
+        'manage website',
     ];
 
     foreach ($permissions as $perm) {
@@ -51,7 +52,12 @@ public function run()
         'view positions', 'create positions', 'edit positions',
         'vote', 'view voting analytics',
         'change password',
+        'manage website',
     ]);
+
+    // Can only edit the public website (sliders, news, gallery, settings...)
+    $websiteEditor = Role::firstOrCreate(['name' => 'Website Editor']);
+    $websiteEditor->givePermissionTo(['manage website', 'change password']);
 
     $member = Role::firstOrCreate(['name' => 'Member']);
     $member->givePermissionTo([

@@ -12,7 +12,12 @@ class EventCategory extends Model
 
     protected $fillable = [
         'name',
-        'description'
+        'description',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     /*

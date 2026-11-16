@@ -11,6 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Already created (e.g. this migration was renamed after it ran): nothing to do.
+        if (Schema::hasTable('vote_audit_logs')) {
+            return;
+        }
+
         Schema::create('vote_audit_logs', function (Blueprint $table) {
     $table->id();
 

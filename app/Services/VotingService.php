@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Election;
 use App\Models\Vote;
 use App\Models\Candidate;
-use Exception;
+use App\Exceptions\VotingException;
 
 class VotingService
 {
@@ -28,15 +28,15 @@ class VotingService
 $now = now();
 
 if(!$election->is_active){
-    throw new \Exception('Election is not active');
+    throw new VotingException('This election is closed.');
 }
 
 if($election->start_time && $now->lt($election->start_time)){
-    throw new \Exception('Voting has not started yet');
+    throw new VotingException('Voting has not started yet.');
 }
 
 if($election->end_time && $now->gt($election->end_time)){
-    throw new \Exception('Voting period has ended');
+    throw new VotingException('The voting period has ended.');
 }
 
         /*
@@ -52,7 +52,7 @@ if($election->end_time && $now->gt($election->end_time)){
         ])->exists();
 
         if($exists){
-            throw new Exception('You already voted');
+            throw new VotingException('You have already voted for this position.');
         }
 
         /*
@@ -68,7 +68,7 @@ if($election->end_time && $now->gt($election->end_time)){
             ->first();
 
         if(!$candidate){
-            throw new Exception('Candidate not allowed');
+            throw new VotingException('This candidate cannot be voted for.');
         }
 
         /*

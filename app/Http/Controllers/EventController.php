@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\EventCategory;
 use Illuminate\Http\Request;
 use App\Jobs\SendEventSmsJob;
+use App\Services\Website\ImageUploader;
 
 class EventController extends Controller
 {
@@ -32,9 +33,17 @@ class EventController extends Controller
             'end_time' => 'nullable',
             'location' => 'nullable|string',
             'capacity' => 'nullable|integer',
-            'status' => 'required|in:upcoming,draft,completed,cancelled',
-            'sms_template' => 'nullable|string'
+            'status' => 'required|in:'.implode(',', array_keys(Event::STATUSES)),
+            'sms_template' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
+
+        // Public website: visibility switch and optional cover image
+        $data['is_public'] = $request->boolean('is_public');
+        unset($data['image']);
+        if ($request->hasFile('image')) {
+            $data['image'] = app(ImageUploader::class)->store($request->file('image'), 'events', 1600);
+        }
 
         // Create the event
         $event = Event::create($data);
@@ -64,11 +73,26 @@ class EventController extends Controller
             'end_time' => 'nullable',
             'location' => 'nullable|string',
             'capacity' => 'nullable|integer',
-            'status' => 'required|in:upcoming,ongoing,completed,cancelled,draft',
-            'sms_template' => 'nullable|string'
+            'status' => 'required|in:'.implode(',', array_keys(Event::STATUSES)),
+            'sms_template' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
+        // Public website: visibility switch and optional cover image
+        $uploader = app(ImageUploader::class);
+        $oldImage = null;
+        $data['is_public'] = $request->boolean('is_public');
+        unset($data['image']);
+        if ($request->hasFile('image')) {
+            $data['image'] = $uploader->store($request->file('image'), 'events', 1600);
+            $oldImage = $event->image;
+        } elseif ($request->boolean('remove_image')) {
+            $data['image'] = null;
+            $oldImage = $event->image;
+        }
+
         $event->update($data);
+        $uploader->delete($oldImage);
 
         // If the SMS template is present, reset the sent flag so the command can send it again
         if (!empty($data['sms_template'])) {

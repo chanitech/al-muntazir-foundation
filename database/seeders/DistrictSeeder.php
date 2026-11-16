@@ -12,7 +12,7 @@ class DistrictSeeder extends Seeder
     {
         // Arusha
         $arusha = Region::where('name', 'Arusha')->first();
-        if ($arusha) {
+        if ($arusha && ! $arusha->districts()->exists()) {
             $arusha->districts()->createMany([
                 ['name' => 'Arusha City'],
                 ['name' => 'Arusha Rural'],
@@ -26,7 +26,7 @@ class DistrictSeeder extends Seeder
 
         // Dar es Salaam
         $dar = Region::where('name', 'Dar es Salaam')->first();
-        if ($dar) {
+        if ($dar && ! $dar->districts()->exists()) {
             $dar->districts()->createMany([
                 ['name' => 'Ilala'],
                 ['name' => 'Kigamboni'],
@@ -38,7 +38,7 @@ class DistrictSeeder extends Seeder
 
         // Dodoma
         $dodoma = Region::where('name', 'Dodoma')->first();
-        if ($dodoma) {
+        if ($dodoma && ! $dodoma->districts()->exists()) {
             $dodoma->districts()->createMany([
                 ['name' => 'Bahi'],
                 ['name' => 'Chamwino'],
@@ -52,7 +52,7 @@ class DistrictSeeder extends Seeder
 
         // Geita
         $geita = Region::where('name', 'Geita')->first();
-        if ($geita) {
+        if ($geita && ! $geita->districts()->exists()) {
             $geita->districts()->createMany([
                 ['name' => 'Bukombe'],
                 ['name' => 'Chato'],
@@ -64,7 +64,7 @@ class DistrictSeeder extends Seeder
 
         // Iringa
         $iringa = Region::where('name', 'Iringa')->first();
-        if ($iringa) {
+        if ($iringa && ! $iringa->districts()->exists()) {
             $iringa->districts()->createMany([
                 ['name' => 'Iringa Rural'],
                 ['name' => 'Iringa Urban'],
@@ -75,7 +75,7 @@ class DistrictSeeder extends Seeder
 
         // Kagera
         $kagera = Region::where('name', 'Kagera')->first();
-        if ($kagera) {
+        if ($kagera && ! $kagera->districts()->exists()) {
             $kagera->districts()->createMany([
                 ['name' => 'Biharamulo'],
                 ['name' => 'Bukoba Rural'],
@@ -90,7 +90,7 @@ class DistrictSeeder extends Seeder
 
         // Katavi
         $katavi = Region::where('name', 'Katavi')->first();
-        if ($katavi) {
+        if ($katavi && ! $katavi->districts()->exists()) {
             $katavi->districts()->createMany([
                 ['name' => 'Mlele'],
                 ['name' => 'Mpimbwe'],
@@ -101,7 +101,7 @@ class DistrictSeeder extends Seeder
 
         // Kigoma
         $kigoma = Region::where('name', 'Kigoma')->first();
-        if ($kigoma) {
+        if ($kigoma && ! $kigoma->districts()->exists()) {
             $kigoma->districts()->createMany([
                 ['name' => 'Buhigwe'],
                 ['name' => 'Kakonko'],
@@ -116,7 +116,7 @@ class DistrictSeeder extends Seeder
 
         // Kilimanjaro
         $kilimanjaro = Region::where('name', 'Kilimanjaro')->first();
-        if ($kilimanjaro) {
+        if ($kilimanjaro && ! $kilimanjaro->districts()->exists()) {
             $kilimanjaro->districts()->createMany([
                 ['name' => 'Hai'],
                 ['name' => 'Moshi Rural'],
@@ -130,7 +130,7 @@ class DistrictSeeder extends Seeder
 
         // Lindi
         $lindi = Region::where('name', 'Lindi')->first();
-        if ($lindi) {
+        if ($lindi && ! $lindi->districts()->exists()) {
             $lindi->districts()->createMany([
                 ['name' => 'Kilwa'],
                 ['name' => 'Lindi Rural'],
@@ -143,7 +143,7 @@ class DistrictSeeder extends Seeder
 
         // Manyara
         $manyara = Region::where('name', 'Manyara')->first();
-        if ($manyara) {
+        if ($manyara && ! $manyara->districts()->exists()) {
             $manyara->districts()->createMany([
                 ['name' => 'Babati Rural'],
                 ['name' => 'Babati Urban'],
@@ -156,7 +156,7 @@ class DistrictSeeder extends Seeder
 
         // Mara
         $mara = Region::where('name', 'Mara')->first();
-        if ($mara) {
+        if ($mara && ! $mara->districts()->exists()) {
             $mara->districts()->createMany([
                 ['name' => 'Bunda'],
                 ['name' => 'Butiama'],
@@ -170,7 +170,7 @@ class DistrictSeeder extends Seeder
 
         // Mbeya
         $mbeya = Region::where('name', 'Mbeya')->first();
-        if ($mbeya) {
+        if ($mbeya && ! $mbeya->districts()->exists()) {
             $mbeya->districts()->createMany([
                 ['name' => 'Busokelo'],
                 ['name' => 'Chunya'],
@@ -184,7 +184,7 @@ class DistrictSeeder extends Seeder
 
         // Morogoro
         $morogoro = Region::where('name', 'Morogoro')->first();
-        if ($morogoro) {
+        if ($morogoro && ! $morogoro->districts()->exists()) {
             $morogoro->districts()->createMany([
                 ['name' => 'Gairo'],
                 ['name' => 'Kilombero'],
@@ -199,7 +199,7 @@ class DistrictSeeder extends Seeder
 
         // Mtwara
         $mtwara = Region::where('name', 'Mtwara')->first();
-        if ($mtwara) {
+        if ($mtwara && ! $mtwara->districts()->exists()) {
             $mtwara->districts()->createMany([
                 ['name' => 'Masasi'],
                 ['name' => 'Masasi Urban'],
@@ -213,7 +213,7 @@ class DistrictSeeder extends Seeder
 
         // Mwanza
         $mwanza = Region::where('name', 'Mwanza')->first();
-        if ($mwanza) {
+        if ($mwanza && ! $mwanza->districts()->exists()) {
             $mwanza->districts()->createMany([
                 ['name' => 'Bukombe'],
                 ['name' => 'Geita'],
@@ -229,7 +229,7 @@ class DistrictSeeder extends Seeder
 
         // Njombe
         $njombe = Region::where('name', 'Njombe')->first();
-        if ($njombe) {
+        if ($njombe && ! $njombe->districts()->exists()) {
             $njombe->districts()->createMany([
                 ['name' => 'Ludewa'],
                 ['name' => 'Makambako'],
@@ -242,7 +242,7 @@ class DistrictSeeder extends Seeder
 
         // Pwani
         $pwani = Region::where('name', 'Pwani')->first();
-        if ($pwani) {
+        if ($pwani && ! $pwani->districts()->exists()) {
             $pwani->districts()->createMany([
                 ['name' => 'Bagamoyo'],
                 ['name' => 'Kibaha'],
@@ -256,7 +256,7 @@ class DistrictSeeder extends Seeder
 
         // Rukwa
         $rukwa = Region::where('name', 'Rukwa')->first();
-        if ($rukwa) {
+        if ($rukwa && ! $rukwa->districts()->exists()) {
             $rukwa->districts()->createMany([
                 ['name' => 'Kalambo'],
                 ['name' => 'Nkasi'],
@@ -266,7 +266,7 @@ class DistrictSeeder extends Seeder
 
         // Ruvuma
         $ruvuma = Region::where('name', 'Ruvuma')->first();
-        if ($ruvuma) {
+        if ($ruvuma && ! $ruvuma->districts()->exists()) {
             $ruvuma->districts()->createMany([
                 ['name' => 'Mbinga'],
                 ['name' => 'Songea Rural'],
@@ -279,7 +279,7 @@ class DistrictSeeder extends Seeder
 
         // Shinyanga
         $shinyanga = Region::where('name', 'Shinyanga')->first();
-        if ($shinyanga) {
+        if ($shinyanga && ! $shinyanga->districts()->exists()) {
             $shinyanga->districts()->createMany([
                 ['name' => 'Kahama'],
                 ['name' => 'Kishapu'],
@@ -292,7 +292,7 @@ class DistrictSeeder extends Seeder
 
         // Simiyu
         $simiyu = Region::where('name', 'Simiyu')->first();
-        if ($simiyu) {
+        if ($simiyu && ! $simiyu->districts()->exists()) {
             $simiyu->districts()->createMany([
                 ['name' => 'Bariadi'],
                 ['name' => 'Busega'],
@@ -304,7 +304,7 @@ class DistrictSeeder extends Seeder
 
         // Singida
         $singida = Region::where('name', 'Singida')->first();
-        if ($singida) {
+        if ($singida && ! $singida->districts()->exists()) {
             $singida->districts()->createMany([
                 ['name' => 'Ikungi'],
                 ['name' => 'Iramba'],
@@ -317,7 +317,7 @@ class DistrictSeeder extends Seeder
 
         // Songwe
         $songwe = Region::where('name', 'Songwe')->first();
-        if ($songwe) {
+        if ($songwe && ! $songwe->districts()->exists()) {
             $songwe->districts()->createMany([
                 ['name' => 'Ileje'],
                 ['name' => 'Mbozi'],
@@ -329,7 +329,7 @@ class DistrictSeeder extends Seeder
 
         // Tabora
         $tabora = Region::where('name', 'Tabora')->first();
-        if ($tabora) {
+        if ($tabora && ! $tabora->districts()->exists()) {
             $tabora->districts()->createMany([
                 ['name' => 'Igunga'],
                 ['name' => 'Kaliua'],
@@ -343,7 +343,7 @@ class DistrictSeeder extends Seeder
 
         // Tanga
         $tanga = Region::where('name', 'Tanga')->first();
-        if ($tanga) {
+        if ($tanga && ! $tanga->districts()->exists()) {
             $tanga->districts()->createMany([
                 ['name' => 'Handeni'],
                 ['name' => 'Handeni Urban'],

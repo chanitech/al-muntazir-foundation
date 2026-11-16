@@ -9,6 +9,11 @@ return new class extends Migration
 {
     public function up()
     {
+        // Already created (e.g. this migration was renamed after it ran): nothing to do.
+        if (Schema::hasTable('membership_sequences')) {
+            return;
+        }
+
         Schema::create('membership_sequences', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('last_number')->default(0);

@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('document_categories', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        // Superseded by 2026_02_23_232921_create_document_categories_table,
+        // which creates the complete table. Kept so existing databases that
+        // already recorded this migration stay consistent.
     }
 
     /**

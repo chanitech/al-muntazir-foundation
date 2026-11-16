@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use App\Services\VotingService;
 use App\Models\Member;
+use App\Models\Position;
+use App\Exceptions\VotingException;
+use Illuminate\Support\Facades\DB;
 
 
 
@@ -32,9 +35,9 @@ class VotingController extends Controller
     | Show Election Voting Page
     |--------------------------------------------------------------------------
     */
-    public function showElection($id)
+    public function showElection(Request $request, $id)
     {
-        $election = Election::with('positions')->findOrFail($id);
+        $election = Election::findOrFail($id);
 
         $candidates = Candidate::where('election_id', $id)
             ->where('is_approved', true)
@@ -42,12 +45,21 @@ class VotingController extends Controller
             ->get()
             ->groupBy('position_id');
 
+        $positions = Position::whereIn('id', $candidates->keys())->get()->keyBy('id');
+
+        // Positions the logged-in member has already voted for.
+        $memberId = $request->user()?->member?->id;
+        $votedPositions = $memberId
+            ? Vote::where('election_id', $id)->where('member_id', $memberId)->pluck('position_id')->all()
+            : [];
+
         return view('admin.voting.vote', compact(
             'election',
-            'candidates'
+            'candidates',
+            'positions',
+            'votedPositions'
         ));
     }
-
 
     public function analytics(Request $request)
 {
@@ -95,64 +107,68 @@ class VotingController extends Controller
     |--------------------------------------------------------------------------
     */
     public function storeVote(Request $request, VotingService $service)
-{
-    $request->validate([
-        'candidate_id' => 'required|exists:candidates,id',
-        'election_id' => 'required|exists:elections,id',
-    ]);
+    {
+        $request->validate([
+            'election_id' => 'required|exists:elections,id',
+            // One candidate per position: votes[position_id] = candidate_id
+            'votes' => 'required_without:candidate_id|array',
+            'votes.*' => 'nullable|integer',
+            // Older single-choice form
+            'candidate_id' => 'required_without:votes|integer',
+        ], [
+            'votes.required_without' => 'Please choose a candidate.',
+        ]);
 
-    $user = $request->user();
+        $member = $request->user()?->member;
 
-    if (!$user || !$user->member) {
-        return back()->withErrors('You are not registered as a member');
-    }
+        if (! $member) {
+            return back()->withErrors('You are not registered as a member.');
+        }
 
-    $member = $user->member;
+        if ($member->status !== 'Active') {
+            return back()->withErrors('Your membership is not active.');
+        }
 
-    if ($member->status !== 'Active') {
-        return back()->withErrors('Your membership is not active');
-    }
+        $candidateIds = array_filter($request->filled('votes')
+            ? array_values($request->input('votes'))
+            : [$request->input('candidate_id')]);
 
-    try {
+        if ($candidateIds === []) {
+            return back()->withErrors('Please choose a candidate.');
+        }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Load Candidate + Position Safety Check
-        |--------------------------------------------------------------------------
-        */
-
-        $candidate = Candidate::where('id', $request->candidate_id)
+        $candidates = Candidate::whereIn('id', $candidateIds)
             ->where('election_id', $request->election_id)
             ->where('is_approved', true)
-            ->firstOrFail();
+            ->get();
 
-        $positionId = $candidate->position_id;
+        if ($candidates->count() !== count($candidateIds)
+            || $candidates->pluck('position_id')->duplicates()->isNotEmpty()) {
+            return back()->withErrors('Your ballot is not valid. Please choose one candidate per position.');
+        }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Voting Service Execution
-        |--------------------------------------------------------------------------
-        */
+        try {
+            // All votes on the ballot are saved together, or none of them.
+            DB::transaction(function () use ($candidates, $service, $member, $request) {
+                foreach ($candidates as $candidate) {
+                    $service->vote($member->id, $candidate->id, $request->election_id, $candidate->position_id, $request->ip());
+                }
+            });
+        } catch (VotingException $e) {
+            return back()->withErrors($e->getMessage());
+        } catch (\Throwable $e) {
+            \Log::error('Voting Error: '.$e->getMessage());
 
-        $service->vote(
-            $member->id,
-            $candidate->id,
-            $request->election_id,
-            $positionId,
-            $request->ip()
-        );
+            return back()->withErrors('Voting failed. Please try again.');
+        }
+
+        Cache::forget("election_result_{$request->election_id}");
+        Cache::forget("election_total_votes_{$request->election_id}");
 
         return redirect()
-            ->back()
-            ->with('success','Vote submitted successfully');
-
-    } catch (\Exception $e){
-
-        \Log::error('Voting Error: '.$e->getMessage());
-
-        return back()->withErrors('Voting failed. Please try again.');
+            ->route('voting.election', $request->election_id)
+            ->with('success', $candidates->count() === 1 ? 'Your vote has been recorded. Thank you!' : 'Your votes have been recorded. Thank you!');
     }
-}
 
     /*
     |--------------------------------------------------------------------------

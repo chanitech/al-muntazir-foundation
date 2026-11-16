@@ -9,10 +9,13 @@ use App\Models\MaritalStatus;
 use App\Models\AcademicInstitution;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use App\Exports\MembersExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role;
@@ -177,11 +180,14 @@ public function wizardStore(Request $request)
             'current_district' => 'nullable|string|max:100',
             'current_village' => 'nullable|string|max:100',
             'marital_status_id' => 'nullable|exists:marital_statuses,id',
-            'spouse_first_name' => 'required_with:marital_status_id|nullable|string|max:100',
+            // Spouse details are only required for married members.
+            'spouse_first_name' => [Rule::requiredIf($this->isMarried($request)), 'nullable', 'string', 'max:100'],
             'spouse_middle_name' => 'nullable|string|max:100',
-            'spouse_surname' => 'required_with:marital_status_id|nullable|string|max:100',
-            'spouse_phone' => 'required_with:marital_status_id|nullable|string|max:30',
-            'children_count' => 'required_with:marital_status_id|nullable|integer|min:0',
+            'spouse_surname' => [Rule::requiredIf($this->isMarried($request)), 'nullable', 'string', 'max:100'],
+            'spouse_phone' => [Rule::requiredIf($this->isMarried($request)), 'nullable', 'string', 'max:30'],
+            'children_count' => 'nullable|integer|min:0',
+            // The e-mail becomes the member's login, so it must be free.
+            'email' => 'nullable|email|max:255|unique:users,email',
             'is_employed' => 'sometimes|boolean',
             'employer_name' => 'required_if:is_employed,1|nullable|string|max:255',
             'job_title' => 'required_if:is_employed,1|nullable|string|max:255',
@@ -192,11 +198,15 @@ public function wizardStore(Request $request)
             'role' => 'required|string|exists:roles,name',
         ]);
 
-        // Create user account
+        // Create user account with a random password (shown once to the
+        // administrator). It used to be derived from the phone number, which
+        // anyone who knows the number could guess.
+        $loginEmail = $request->email ?? $request->phone . '@member.local';
+        $password = Str::password(10, symbols: false);
         $user = User::create([
             'name' => $request->first_name . ' ' . $request->last_name,
-            'email' => $request->email ?? $request->phone . '@member.local',
-            'password' => Hash::make(substr($request->phone, -6) . '@Member')
+            'email' => $loginEmail,
+            'password' => Hash::make($password)
         ]);
 
         // 👇 NEW: Assign the selected role
@@ -315,11 +325,16 @@ public function wizardStore(Request $request)
         DB::commit();
 
         return redirect()->route('admin.members.index')
-            ->with('success', 'Member registered successfully');
+            ->with('success', 'Member registered successfully with number ' . $membershipNumber . '.')
+            ->with('new_login', ['email' => $loginEmail, 'password' => $password]);
+    } catch (ValidationException $e) {
+        // Show the normal field errors and keep what was typed.
+        DB::rollBack();
+        throw $e;
     } catch (\Throwable $e) {
         DB::rollBack();
         Log::error('Member Wizard Store Error: ' . $e->getMessage());
-        return back()->withErrors('Registration failed: ' . $e->getMessage());
+        return back()->withErrors('Registration failed: ' . $e->getMessage())->withInput();
     }
 }
 
@@ -368,11 +383,12 @@ public function wizardStore(Request $request)
 
         // Family
         'marital_status_id' => 'nullable|exists:marital_statuses,id',
-        'spouse_first_name' => 'required_with:marital_status_id|nullable|string|max:100',
+        // Spouse details are only required for married members.
+        'spouse_first_name' => [Rule::requiredIf($this->isMarried($request)), 'nullable', 'string', 'max:100'],
         'spouse_middle_name' => 'nullable|string|max:100',
-        'spouse_surname' => 'required_with:marital_status_id|nullable|string|max:100',
-        'spouse_phone' => 'required_with:marital_status_id|nullable|string|max:30',
-        'children_count' => 'required_with:marital_status_id|nullable|integer|min:0',
+        'spouse_surname' => [Rule::requiredIf($this->isMarried($request)), 'nullable', 'string', 'max:100'],
+        'spouse_phone' => [Rule::requiredIf($this->isMarried($request)), 'nullable', 'string', 'max:30'],
+        'children_count' => 'nullable|integer|min:0',
 
         // Employment
         'is_employed' => 'sometimes|boolean',
@@ -574,5 +590,11 @@ public function wizardStore(Request $request)
         }
 
         abort(404);
+    }
+
+    /** Whether the marital status chosen in the form is "Married". */
+    private function isMarried(Request $request): bool
+    {
+        return (bool) MaritalStatus::find($request->input('marital_status_id'))?->isMarried();
     }
 }
