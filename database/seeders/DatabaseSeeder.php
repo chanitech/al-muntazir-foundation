@@ -16,13 +16,18 @@ class DatabaseSeeder extends Seeder
     public function run(): void
 
     {
+        // All seeders below are safe to run more than once.
         $this->call(MembershipTypeSeeder::class);
         $this->call(RolesAndPermissionsSeeder::class);
-        // User::factory(10)->create();
+        $this->call(RegionSeeder::class);
+        $this->call(DistrictSeeder::class);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // A sample login for local development only.
+        if (app()->environment('local')) {
+            User::firstOrCreate(
+                ['email' => 'test@example.com'],
+                ['name' => 'Test User', 'password' => bcrypt('password')]
+            );
+        }
     }
 }

@@ -7,9 +7,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('documents', function (Blueprint $table) {
-            $table->unsignedBigInteger('download_count')->default(0)->after('is_public');
-        });
+        if (Schema::hasTable('documents') && ! Schema::hasColumn('documents', 'download_count')) {
+            Schema::table('documents', function (Blueprint $table) {
+                $table->unsignedBigInteger('download_count')->default(0);
+            });
+        }
     }
 
     public function down(): void

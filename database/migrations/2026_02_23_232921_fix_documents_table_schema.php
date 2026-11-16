@@ -7,6 +7,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // On a fresh install the documents table is created later, complete.
+        if (! Schema::hasTable('documents')) {
+            return;
+        }
+
         Schema::table('documents', function (Blueprint $table) {
 
             if (!Schema::hasColumn('documents','title')) {

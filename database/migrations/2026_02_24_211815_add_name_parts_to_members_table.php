@@ -6,13 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::table('members', function (Blueprint $table) {
-            $table->string('first_name')->nullable()->after('full_name');
-            $table->string('middle_name')->nullable()->after('first_name');
-            $table->string('last_name')->nullable()->after('middle_name');
-        });
+        foreach (['first_name', 'middle_name', 'last_name'] as $column) {
+            if (! Schema::hasColumn('members', $column)) {
+                Schema::table('members', fn (Blueprint $table) => $table->string($column)->nullable());
+            }
+        }
     }
 
     public function down()

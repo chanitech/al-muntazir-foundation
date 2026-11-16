@@ -7,11 +7,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('document_categories', function (Blueprint $table) {
-            $table->boolean('is_active')
-                  ->default(true)
-                  ->after('id');
-        });
+        if (Schema::hasTable('document_categories') && ! Schema::hasColumn('document_categories', 'is_active')) {
+            Schema::table('document_categories', function (Blueprint $table) {
+                $table->boolean('is_active')->default(true);
+            });
+        }
     }
 
     public function down(): void

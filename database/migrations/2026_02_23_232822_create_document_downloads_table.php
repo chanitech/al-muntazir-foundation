@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('document_downloads', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        // Superseded by 2026_05_23_232923_create_document_downloads_table and
+        // 2026_11_15_000000_complete_membership_schema, which create the
+        // complete table once the documents table exists.
     }
 
     /**
