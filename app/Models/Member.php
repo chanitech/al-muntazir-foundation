@@ -52,10 +52,28 @@ class Member extends Model
         'address',
         'photo',
 
+        'first_name',
+        'middle_name',
+        'last_name',
+
+        'current_country',
+        'current_region',
+        'current_district',
+        'current_village',
+
         'marital_status_id',
         'spouse_name',
+        'spouse_first_name',
+        'spouse_middle_name',
+        'spouse_surname',
         'spouse_phone',
         'children_count',
+
+        'is_employed',
+        'employer_name',
+        'job_title',
+        'employment_status',
+        'employer_address',
 
         /*
         Wizard JSON Storage (Enterprise Friendly)
@@ -78,6 +96,7 @@ class Member extends Model
         'join_date' => 'date',
 
         'children_count' => 'integer',
+        'is_employed' => 'boolean',
 
         'family_info' => 'array',
         'academic_history' => 'array',
@@ -89,6 +108,12 @@ class Member extends Model
     | Relationships
     |--------------------------------------------------------------------------
     */
+
+    /** The login account of this member (used for voting and roles). */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function membershipType()
     {
@@ -137,19 +162,21 @@ class Member extends Model
 
 public static function generateMembershipNumber(): string
 {
-    // This must run inside an existing transaction
-    $last = self::lockForUpdate()
+    // Must run inside a database transaction (the row lock prevents two
+    // registrations from getting the same number). Deleted members are
+    // included so their numbers are never handed out again.
+    $last = self::withTrashed()
+        ->lockForUpdate()
         ->orderBy('id', 'desc')
-        ->first();
+        ->value('membership_number');
 
-    $nextNumber = 1;
+    $nextNumber = $last ? ((int) Str::substr($last, -6)) + 1 : 1;
 
-    if ($last && $last->membership_number) {
-        $lastNumber = (int) Str::substr($last->membership_number, -6);
-        $nextNumber = $lastNumber + 1;
-    }
+    do {
+        $number = 'AYFC-' . str_pad($nextNumber++, 6, '0', STR_PAD_LEFT);
+    } while (self::withTrashed()->where('membership_number', $number)->exists());
 
-    return 'AYFC-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+    return $number;
 }
 
 public function academicCount(): int

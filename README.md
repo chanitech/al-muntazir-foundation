@@ -3,8 +3,11 @@
 Membership, events, documents and elections system with a public website,
 built with Laravel 12 and AdminLTE.
 
-- **Public website and the Website admin section:** see [docs/WEBSITE.md](docs/WEBSITE.md)
-  (how to deploy, and how to manage sliders, programs, news, gallery, settings…).
+- **Deploying an update to the server:** [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
+- **Public website and the Website admin section:** [docs/WEBSITE.md](docs/WEBSITE.md)
+  (sliders, programs, news, gallery, site settings…)
+- **Membership system** (online applications, members, elections, documents,
+  permissions): [docs/MEMBERSHIP.md](docs/MEMBERSHIP.md)
 
 ---
 

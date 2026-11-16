@@ -8,6 +8,19 @@
 
 @section('content')
 
+@can('view members')
+    @php $pendingApplications = \App\Models\MembershipApplication::pending()->count(); @endphp
+    @if ($pendingApplications > 0)
+        <div class="callout callout-warning d-flex flex-wrap align-items-center">
+            <div class="mr-3 mb-1">
+                <i class="fas fa-user-plus text-warning mr-1"></i>
+                <strong>{{ $pendingApplications }} membership {{ Str::plural('application', $pendingApplications) }}</strong> from the website {{ $pendingApplications === 1 ? 'is' : 'are' }} waiting for review.
+            </div>
+            <a href="{{ route('admin.applications.index') }}" class="btn btn-sm btn-warning ml-auto">Review now</a>
+        </div>
+    @endif
+@endcan
+
 <div class="row">
 
     <!-- Members -->

@@ -80,10 +80,9 @@
 <label>Status</label>
 
 <select name="status" class="form-control" required>
-<option value="upcoming">Upcoming</option>
-<option value="draft">Draft</option>
-<option value="completed">Completed</option>
-<option value="cancelled">Cancelled</option>
+@foreach(\App\Models\Event::STATUSES as $value => $label)
+<option value="{{ $value }}" @selected(old('status', 'upcoming') === $value)>{{ $label }}</option>
+@endforeach
 </select>
 
 </div>

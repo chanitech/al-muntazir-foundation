@@ -61,7 +61,7 @@ public function store(Request $request)
 */
 public function edit(AcademicInstitution $academicInstitution)
 {
-    return view('admin.academic_institutions.form',
+    return view('admin.academic_institutions.create',
         compact('academicInstitution'));
 }
 

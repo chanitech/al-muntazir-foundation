@@ -33,7 +33,7 @@ class EventController extends Controller
             'end_time' => 'nullable',
             'location' => 'nullable|string',
             'capacity' => 'nullable|integer',
-            'status' => 'required|in:upcoming,draft,completed,cancelled',
+            'status' => 'required|in:'.implode(',', array_keys(Event::STATUSES)),
             'sms_template' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
@@ -73,7 +73,7 @@ class EventController extends Controller
             'end_time' => 'nullable',
             'location' => 'nullable|string',
             'capacity' => 'nullable|integer',
-            'status' => 'required|in:upcoming,ongoing,completed,cancelled,draft',
+            'status' => 'required|in:'.implode(',', array_keys(Event::STATUSES)),
             'sms_template' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);

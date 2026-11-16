@@ -196,7 +196,7 @@
                                 <div class="row">
                                     <div class="col-md-5"><x-admin.input name="cta_button_text" label="Button text" :value="$v('cta_button_text')" /></div>
                                     <div class="col-md-7"><x-admin.input name="cta_button_link" label="Button link" :value="$v('cta_button_link')"
-                                        placeholder="/contact?subject=Membership" help="Default: the Contact page with “Membership” selected." /></div>
+                                        placeholder="/membership/apply" help="Default: the online membership application form." /></div>
                                 </div>
                             </div>
                         </div>

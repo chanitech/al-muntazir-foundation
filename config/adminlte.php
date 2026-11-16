@@ -177,8 +177,8 @@ return [
     'logout_url' => 'logout',
     'login_url' => 'login',
     'register_url' => 'register',
-    'password_reset_url' => 'password/reset',
-    'password_email_url' => 'password/email',
+    'password_reset_url' => 'forgot-password',
+    'password_email_url' => 'forgot-password',
     'profile_url' => false,
     'disable_darkmode_routes' => false,
 
@@ -223,6 +223,7 @@ return [
         'can' => 'view members',
         'submenu' => [
             [
+                'key' => 'members',
                 'text' => 'Members',
                 'route' => 'admin.members.index',
                 'icon' => 'fas fa-user',
@@ -323,11 +324,9 @@ return [
             ],
             [
                 'text' => 'Voting Analytics',
-               // 'route' => 'voting.analytics',   // fixed: use route name, with parameter
+                'route' => 'voting.analytics',
                 'icon' => 'fas fa-chart-line',
-                'permission' => 'view voting analytics',
-                // If parameter is required, you can pass a default, e.g., ['id' => 1]
-                'params' => ['id' => 1],
+                'can' => 'view voting analytics',
             ],
         ],
     ],
@@ -363,13 +362,13 @@ return [
                 'text' => 'Change Password',
                 'route' => 'password.change',
                 'icon' => 'fas fa-key',
-                'permission' => 'change password',
+                'can' => 'change password',
             ],
             [
                 'text' => 'Roles & Permissions',
                 'route' => 'admin.roles.index',
                 'icon' => 'fas fa-lock',
-                'permission' => 'view roles',
+                'can' => 'view roles',
             ],
         ],
     ],

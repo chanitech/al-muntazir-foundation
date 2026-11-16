@@ -5,49 +5,10 @@ is managed from the admin panel under **Website**. Nothing on the website is
 hard-coded any more: names, logo, colours, contact details, texts, photos and
 lists all come from the admin panel.
 
-## Deploying this update to the server
+## Deploying
 
-> **Back up first.** Copy the server folder and dump the database before
-> updating. The live server has code (for example the existing
-> `/admin/sliders` page) that is not in this repository, and this update
-> replaces those routes.
-
-```bash
-cd /var/www/ayfc
-mysqldump -u <db-user> -p <db-name> > ~/ayfc-backup-$(date +%F).sql
-cp -a /var/www/ayfc ~/ayfc-code-backup-$(date +%F)
-```
-
-Then update the code (for example with `git pull`) and run:
-
-```bash
-composer install --no-dev --optimize-autoloader
-php artisan migrate:status        # check which migrations will run
-php artisan migrate --force
-php artisan storage:link          # only needed once; makes uploaded images public
-php artisan optimize:clear
-```
-
-`php artisan migrate` creates the website tables and the `manage website`
-permission, and gives that permission to the existing **Super Admin** and
-**Admin** roles. The **Website** menu appears for those users straight away.
-
-If a `sliders` table already exists, the migration keeps it and its rows and
-only adds the missing columns. Existing slides stay visible.
-
-### Server settings for photo uploads
-
-Images up to 5 MB each are accepted, and the gallery accepts up to 20 photos
-at once. Check these values in `php.ini` (or your hosting control panel):
-
-```ini
-upload_max_filesize = 8M
-post_max_size = 64M
-```
-
-Large photos are automatically scaled down (e.g. slides to 1920 px wide).
-This needs the PHP **GD** extension, which most servers have. Without GD,
-images are stored unchanged.
+See [DEPLOYMENT.md](DEPLOYMENT.md) for the server update steps (backup,
+migrations, permissions and upload settings).
 
 ## Using the Website admin
 

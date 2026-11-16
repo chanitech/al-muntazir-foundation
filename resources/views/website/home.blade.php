@@ -87,7 +87,7 @@
                     <h1>{{ $site->hero_title }}</h1>
                     <p class="hero-text">{{ $site->hero_subtitle }}</p>
                     <div class="d-flex flex-wrap gap-2">
-                        <a href="{{ $site->get('cta_button_link') ?: route('site.contact', ['subject' => 'Membership']) }}" class="btn btn-accent btn-lg">{{ $site->get('cta_button_text', 'Join Us') }}</a>
+                        <a href="{{ $site->get('cta_button_link') ?: route('site.membership.apply') }}" class="btn btn-accent btn-lg">{{ $site->get('cta_button_text', 'Join Us') }}</a>
                         <a href="{{ route('site.about') }}" class="btn btn-ghost-light btn-lg">Learn more</a>
                     </div>
                 </div>

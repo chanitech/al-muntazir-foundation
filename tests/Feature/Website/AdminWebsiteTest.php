@@ -255,7 +255,9 @@ class AdminWebsiteTest extends TestCase
     public function test_an_event_can_be_published_on_the_website_with_a_cover_image(): void
     {
         $user = User::factory()->create();
-        $user->givePermissionTo(Permission::findOrCreate('view events', 'web'));
+        foreach (['view events', 'create events', 'edit events'] as $permission) {
+            $user->givePermissionTo(Permission::findOrCreate($permission, 'web'));
+        }
         $this->actingAs($user);
         $category = EventCategory::create(['name' => 'Workshops', 'is_active' => true]);
 

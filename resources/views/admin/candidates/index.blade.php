@@ -4,6 +4,8 @@
 
 @section('content')
 
+<x-admin.flash />
+
 <div class="card">
 
 <div class="card-header d-flex justify-content-between">
@@ -24,6 +26,7 @@ Nominate Candidate
 <th>Member</th>
 <th>Election</th>
 <th>Position</th>
+<th class="text-right">Actions</th>
 </tr>
 </thead>
 
@@ -35,12 +38,21 @@ Nominate Candidate
 <td>{{ $candidate->member->full_name ?? '' }}</td>
 <td>{{ $candidate->election->name ?? '' }}</td>
 <td>{{ $candidate->position->name ?? '' }}</td>
+<td class="text-right">
+@can('delete candidates')
+<form action="{{ route('candidates.destroy', $candidate) }}" method="POST" class="d-inline" onsubmit="return confirm('Remove this nomination?')">
+@csrf
+@method('DELETE')
+<button class="btn btn-sm btn-outline-danger" title="Remove nomination"><i class="fas fa-trash"></i></button>
+</form>
+@endcan
+</td>
 </tr>
 
 @empty
 
 <tr>
-<td colspan="3" class="text-center text-muted">
+<td colspan="4" class="text-center text-muted">
 No candidates nominated
 </td>
 </tr>
@@ -50,6 +62,8 @@ No candidates nominated
 </tbody>
 
 </table>
+
+<div class="mt-3">{{ $candidates->links('pagination::bootstrap-4') }}</div>
 
 </div>
 

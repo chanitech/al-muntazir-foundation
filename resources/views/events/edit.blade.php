@@ -78,8 +78,8 @@
             <div class="form-group">
                 <label for="status">Status</label>
                 <select name="status" id="status" class="form-control" required>
-                    @foreach(['upcoming', 'ongoing', 'completed', 'cancelled'] as $status)
-                        <option value="{{ $status }}" @selected(old('status', $event->status) === $status)>{{ ucfirst($status) }}</option>
+                    @foreach(\App\Models\Event::STATUSES as $value => $label)
+                        <option value="{{ $value }}" @selected(old('status', $event->status) === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
             </div>

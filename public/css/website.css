@@ -394,6 +394,19 @@ img { max-width: 100%; }
 
 .social-soft .social-links a { width: 42px; height: 42px; background: var(--soft); color: var(--dark); font-size: 1.05rem; }
 
+/* ---------- Membership application ---------- */
+.apply-steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 1.25rem; }
+.apply-steps li { display: flex; gap: 1rem; align-items: flex-start; }
+.apply-steps .num { width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center; background: var(--brand); color: var(--on-brand); font-weight: 800; font-family: var(--font-heading); }
+.apply-steps strong { color: var(--dark); display: block; margin-bottom: .15rem; }
+.apply-steps p { margin: 0; color: var(--muted); font-size: .95rem; }
+.apply-section { border: 0; padding: 0; margin: 0 0 2rem; }
+.apply-section legend { font-family: var(--font-heading); font-weight: 700; font-size: 1.1rem; color: var(--dark); margin-bottom: 1rem; display: flex; align-items: center; gap: .6rem; }
+.apply-section legend span { width: 28px; height: 28px; border-radius: 8px; display: inline-grid; place-items: center; background: rgba(var(--accent-rgb), .25); color: var(--dark); font-size: .9rem; }
+.apply-section + .apply-section { border-top: 1px solid var(--line); padding-top: 1.75rem; }
+.apply-success-icon { width: 76px; height: 76px; border-radius: 50%; margin: 0 auto 1.25rem; display: grid; place-items: center; background: #ecfdf3; color: #12b76a; font-size: 2.4rem; }
+.apply-reference { display: inline-block; font-family: var(--font-heading); font-weight: 800; font-size: 1.5rem; letter-spacing: .08em; padding: .6rem 1.4rem; border-radius: 12px; background: var(--soft); color: var(--dark); border: 1px dashed var(--brand); }
+
 /* ---------- Empty states ---------- */
 .empty-state { text-align: center; padding: 4rem 1rem; color: var(--muted); }
 .empty-state i { font-size: 3rem; color: #c3cad6; display: block; margin-bottom: 1rem; }

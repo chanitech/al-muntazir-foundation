@@ -1,134 +1,113 @@
 @extends('adminlte::page')
 
-@section('title','Vote')
+@section('title', 'Vote – '.$election->name)
+
+@section('content_header')
+    <h1>{{ $election->name }}</h1>
+    <p class="text-muted mb-0">
+        Voting {{ $election->start_time?->format('d M Y, H:i') }} – {{ $election->end_time?->format('d M Y, H:i') }}
+    </p>
+@stop
 
 @section('content')
 
-<h3 class="mb-4">
-    {{ $election->name }}
-</h3>
+<x-admin.flash />
 
-{{-- Messages --}}
-@if(session('success'))
-<div class="alert alert-success alert-dismissible fade show">
-    {{ session('success') }}
-</div>
-@endif
-
-@if ($errors->any())
-<div class="alert alert-danger">
-<ul>
-@foreach($errors->all() as $error)
-<li>{{ $error }}</li>
-@endforeach
-</ul>
-</div>
+@if (! $election->isOpen())
+    <div class="alert alert-warning">
+        <i class="fas fa-clock mr-1"></i>
+        @if (! $election->is_active)
+            This election is closed.
+        @elseif ($election->start_time && now()->lt($election->start_time))
+            Voting has not started yet. It opens on {{ $election->start_time->format('d M Y \a\t H:i') }}.
+        @else
+            Voting has ended. Thank you for taking part.
+        @endif
+    </div>
 @endif
 
 <form action="{{ route('voting.store') }}" method="POST">
 @csrf
-
 <input type="hidden" name="election_id" value="{{ $election->id }}">
 
 <div class="card">
-
 <div class="card-body">
+
+<p class="text-muted">Choose one candidate for each position, then press <strong>Submit my votes</strong>. You can only vote once per position.</p>
 
 @forelse($candidates as $positionId => $candidateGroup)
 
 @php
-$position = \App\Models\Position::find($positionId);
+    $position = $positions[$positionId] ?? null;
+    $voted = in_array($positionId, $votedPositions);
 @endphp
 
-{{-- Position Header --}}
-<h5 class="text-primary mt-4 border-bottom pb-2">
+<h5 class="text-primary mt-4 border-bottom pb-2 d-flex align-items-center">
     {{ $position->name ?? 'Position' }}
+    @if ($voted)
+        <span class="badge badge-success ml-2"><i class="fas fa-check mr-1"></i>You have voted</span>
+    @endif
 </h5>
 
 <div class="row">
-
 @foreach($candidateGroup as $candidate)
-
-@php
-$member = $candidate->member;
-@endphp
+@php $member = $candidate->member; @endphp
 
 <div class="col-md-4 mb-3">
-
-<div class="card shadow-sm border h-100">
-
+<label class="card shadow-sm border h-100 mb-0 ballot-option {{ $voted ? 'is-disabled' : '' }}" for="candidate_{{ $candidate->id }}">
 <div class="card-body text-center">
 
-{{-- Candidate Photo --}}
-<img
-src="{{ $member->photo_url ?? asset('images/default.png') }}"
-class="img-fluid rounded-circle mb-3"
-style="width:200px;height:200px;object-fit:cover">
+<img src="{{ $member->photo_url ?? asset('images/default.png') }}" alt=""
+     class="img-fluid rounded-circle mb-3" style="width:160px;height:160px;object-fit:cover">
 
-{{-- Candidate Name --}}
-<h2 class="font-weight-bold">
-{{ $member->full_name ?? 'Candidate' }}
-</h2>
+<h4 class="font-weight-bold">{{ $member->full_name ?? 'Candidate' }}</h4>
 
-{{-- Manifesto Preview --}}
 @if(!empty($candidate->manifesto))
-<p class="text-muted medium">
-{{ \Illuminate\Support\Str::limit($candidate->manifesto, 120) }}
-</p>
+<p class="text-muted">{{ \Illuminate\Support\Str::limit($candidate->manifesto, 160) }}</p>
 @endif
 
-{{-- Vote Percentage --}}
-@if(isset($candidate->vote_percentage))
-<div class="progress mb-2">
-<div class="progress-bar"
-style="width: {{ $candidate->vote_percentage }}%">
-{{ $candidate->vote_percentage }}%
+<div class="custom-control custom-radio mt-2">
+    <input class="custom-control-input" type="radio"
+           id="candidate_{{ $candidate->id }}"
+           name="votes[{{ $positionId }}]"
+           value="{{ $candidate->id }}"
+           @checked(old('votes.'.$positionId) == $candidate->id)
+           @disabled($voted || ! $election->isOpen())>
+    <span class="custom-control-label">Vote for this candidate</span>
 </div>
+
 </div>
-@endif
-
-{{-- Vote Selection --}}
-<div class="form-check mt-2">
-
-<input class="form-check-input"
-type="radio"
-name="candidate_id"
-value="{{ $candidate->id }}"
-required>
-
-<label class="form-check-label">
-Select Candidate
 </label>
-
 </div>
-
-</div>
-</div>
-
-</div>
-
 @endforeach
-
 </div>
 
 @empty
 
-<div class="alert alert-info">
-No candidates available for voting.
-</div>
+<div class="alert alert-info">No candidates available for voting.</div>
 
 @endforelse
 
 </div>
 
+@if ($candidates->isNotEmpty() && $election->isOpen() && count($votedPositions) < $candidates->count())
 <div class="card-footer text-right">
 <button type="submit" class="btn btn-success px-4">
-<i class="fas fa-check"></i> Submit Vote
+<i class="fas fa-check"></i> Submit my votes
 </button>
 </div>
+@endif
 
 </div>
-
 </form>
 
 @endsection
+
+@push('css')
+<style>
+    .ballot-option { cursor: pointer; transition: box-shadow .2s, border-color .2s; }
+    .ballot-option:hover { box-shadow: 0 .5rem 1rem rgba(0,0,0,.08) !important; }
+    .ballot-option:has(input:checked) { border-color: #28a745 !important; box-shadow: 0 0 0 3px rgba(40,167,69,.25) !important; }
+    .ballot-option.is-disabled { cursor: default; opacity: .65; }
+</style>
+@endpush

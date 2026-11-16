@@ -76,10 +76,12 @@ public function store(Request $request)
 
     $filename = uniqid().'_'.time().'.'.$extension;
 
+    // Private disk (storage/app/private): files are only reachable through
+    // the permission-checked download route, never by a direct link.
     $path = $file->storeAs(
         'documents',
         $filename,
-        'public'
+        Document::DISK
     );
 
     Document::create([
@@ -137,9 +139,9 @@ public function store(Request $request)
 
 public function secureDownload(Request $request, Document $document)
 {
-    $filePath = storage_path('app/public/' . $document->file_path);
+    $filePath = $document->absolutePath();
 
-    if (!file_exists($filePath)) {
+    if (! $filePath) {
         abort(404);
     }
 
@@ -175,6 +177,8 @@ public function generateDownloadLink(Document $document)
     */
     public function destroy(Document $document)
     {
+        // Older uploads may still be on the public disk.
+        Storage::disk(Document::DISK)->delete($document->file_path);
         Storage::disk('public')->delete($document->file_path);
 
         $document->delete();

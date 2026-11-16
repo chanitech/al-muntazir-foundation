@@ -5,7 +5,7 @@
     $description = trim($__env->yieldContent('meta_description')) ?: $site->get('meta_description');
     $shareImage = trim($__env->yieldContent('meta_image')) ?: $site->logoUrl();
     $version = fn (string $file) => asset($file).'?v='.(@filemtime(public_path($file)) ?: '1');
-    $joinLink = $site->get('cta_button_link') ?: route('site.contact', ['subject' => 'Membership']);
+    $joinLink = $site->get('cta_button_link') ?: route('site.membership.apply');
     $nav = [
         ['Home', route('home'), request()->routeIs('home')],
         ['About', route('site.about'), request()->routeIs('site.about')],

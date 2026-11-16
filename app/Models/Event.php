@@ -12,6 +12,15 @@ class Event extends Model
 {
     use HasFactory, SoftDeletes;
 
+    /** Allowed values for the status column, with their labels. */
+    public const STATUSES = [
+        'upcoming' => 'Upcoming',
+        'ongoing' => 'Ongoing',
+        'completed' => 'Completed',
+        'cancelled' => 'Cancelled',
+        'draft' => 'Draft',
+    ];
+
     protected $fillable = [
         'event_category_id',
         'title',
