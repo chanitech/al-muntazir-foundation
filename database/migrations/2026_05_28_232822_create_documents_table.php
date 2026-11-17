@@ -20,7 +20,6 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('document_category_id')
-                ->nullable()
                 ->constrained('document_categories')
                 ->cascadeOnDelete();
             $table->string('title');
