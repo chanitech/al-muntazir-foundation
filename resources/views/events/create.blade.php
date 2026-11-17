@@ -10,7 +10,7 @@
 <h4>Create Event</h4>
 </div>
 
-<form method="POST" action="{{ route('events.store') }}">
+<form method="POST" action="{{ route('events.store') }}" enctype="multipart/form-data">
 @csrf
 
 <div class="card-body">
@@ -80,13 +80,14 @@
 <label>Status</label>
 
 <select name="status" class="form-control" required>
-<option value="upcoming">Upcoming</option>
-<option value="draft">Draft</option>
-<option value="completed">Completed</option>
-<option value="cancelled">Cancelled</option>
+@foreach(\App\Models\Event::STATUSES as $value => $label)
+<option value="{{ $value }}" @selected(old('status', 'upcoming') === $value)>{{ $label }}</option>
+@endforeach
 </select>
 
 </div>
+
+@include('events._website-fields', ['event' => null])
 
 <hr>
 

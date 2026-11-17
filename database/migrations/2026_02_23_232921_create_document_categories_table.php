@@ -11,8 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Also defined (as an id/timestamps placeholder, now a no-op) by
-        // 2026_02_23_232822_create_document_categories_table.
+        // Already created (e.g. this migration was renamed after it ran): nothing to do.
         if (Schema::hasTable('document_categories')) {
             return;
         }

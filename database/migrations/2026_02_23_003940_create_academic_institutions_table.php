@@ -11,6 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Already created (e.g. this migration was renamed after it ran): nothing to do.
+        if (Schema::hasTable('academic_institutions')) {
+            return;
+        }
+
         Schema::create('academic_institutions', function ($table) {
 
     $table->id();

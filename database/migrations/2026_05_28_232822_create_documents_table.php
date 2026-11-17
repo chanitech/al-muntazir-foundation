@@ -11,15 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // On a fresh database `documents` is created earlier, with its full schema, by
-        // 2026_02_23_232921_fix_documents_table_schema (document_downloads, dated
-        // 2026_05_23, already references it).
         if (Schema::hasTable('documents')) {
             return;
         }
 
+        // The complete documents table (earlier migrations that alter it are
+        // skipped on a fresh install because the table did not exist yet).
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('document_category_id')
+                ->nullable()
+                ->constrained('document_categories')
+                ->cascadeOnDelete();
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->string('file_path');
+            $table->string('file_name');
+            $table->string('file_extension', 20);
+            $table->integer('file_size');
+            $table->boolean('is_public')->default(false);
+            $table->unsignedBigInteger('download_count')->default(0);
+            $table->foreignId('uploaded_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
             $table->timestamps();
         });
     }
@@ -29,8 +44,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Intentionally empty: the table is dropped by
-        // 2026_02_23_232921_fix_documents_table_schema. Dropping it here would fail
-        // while document_downloads still references it.
+        Schema::dropIfExists('documents');
     }
 };

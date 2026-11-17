@@ -23,6 +23,9 @@ class Document extends Model
         'uploaded_by'
     ];
 
+    /** Disk for uploaded files: private, served only through the download route. */
+    public const DISK = 'local';
+
     protected $casts = [
         'is_public' => 'boolean',
         'download_count' => 'integer',
@@ -44,8 +47,24 @@ class Document extends Model
     |--------------------------------------------------------------------------
     */
 
+    /** Link to download the file (checks the user's permission). */
     public function getFileUrlAttribute(): string
     {
-        return \Storage::url($this->file_path);
+        return route('documents.secure-download', $this);
+    }
+
+    /**
+     * Full path of the stored file, or null if it is missing. Looks on the
+     * private disk first, then on the public disk used by older uploads.
+     */
+    public function absolutePath(): ?string
+    {
+        foreach ([self::DISK, 'public'] as $disk) {
+            if ($this->file_path && Storage::disk($disk)->exists($this->file_path)) {
+                return Storage::disk($disk)->path($this->file_path);
+            }
+        }
+
+        return null;
     }
 }

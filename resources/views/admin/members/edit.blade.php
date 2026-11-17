@@ -3,6 +3,7 @@
 @section('title', 'Edit Member: ' . $member->full_name)
 
 @section('content')
+<x-admin.flash />
 <div class="card">
     <div class="card-header bg-warning text-white">
         <h5 class="mb-0">Edit Member: {{ $member->full_name }}</h5>
@@ -148,18 +149,20 @@
                         <select name="marital_status_id" id="maritalStatus" class="form-control" onchange="toggleFamilyFields()">
                             <option value="">None</option>
                             @foreach($maritalStatuses as $status)
-                                <option value="{{ $status->id }}" {{ old('marital_status_id', $member->marital_status_id) == $status->id ? 'selected' : '' }}>{{ $status->name }}</option>
+                                <option value="{{ $status->id }}" data-married="{{ $status->isMarried() ? 1 : 0 }}" {{ old('marital_status_id', $member->marital_status_id) == $status->id ? 'selected' : '' }}>{{ $status->name }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div id="familyFields" style="display: {{ old('marital_status_id', $member->marital_status_id) ? 'block' : 'none' }};">
+                        <div id="spouseFields">
                         <div class="row">
                             <div class="col-md-4"><label>Spouse First Name</label><input name="spouse_first_name" class="form-control" value="{{ old('spouse_first_name', $member->spouse_first_name) }}"></div>
                             <div class="col-md-4"><label>Spouse Middle Name</label><input name="spouse_middle_name" class="form-control" value="{{ old('spouse_middle_name', $member->spouse_middle_name) }}"></div>
                             <div class="col-md-4"><label>Spouse Surname</label><input name="spouse_surname" class="form-control" value="{{ old('spouse_surname', $member->spouse_surname) }}"></div>
                         </div>
                         <div class="form-group mt-2"><label>Spouse Phone</label><input name="spouse_phone" class="form-control" value="{{ old('spouse_phone', $member->spouse_phone) }}"></div>
+                        </div>
                         <div class="form-group"><label>Children Count</label><input type="number" name="children_count" class="form-control" value="{{ old('children_count', $member->children_count ?? 0) }}"></div>
                     </div>
                 </div>
@@ -294,10 +297,16 @@
 @push('js')
 <script>
 // ========== FUNCTIONS ==========
+document.addEventListener('DOMContentLoaded', function () { toggleFamilyFields(); });
+
 function toggleFamilyFields() {
     var maritalStatus = document.getElementById('maritalStatus').value;
     var familyFields = document.getElementById('familyFields');
     familyFields.style.display = maritalStatus ? 'block' : 'none';
+    // Spouse details only apply to married members.
+    var select = document.getElementById('maritalStatus');
+    var option = select.options[select.selectedIndex];
+    document.getElementById('spouseFields').style.display = option && option.getAttribute('data-married') === '1' ? 'block' : 'none';
 }
 
 function toggleEmployment() {

@@ -7,40 +7,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        /*
-         * Fresh database: `documents` would only be created later by
-         * 2026_05_28_232822_create_documents_table, but document_downloads (2026_05_23)
-         * already references it, and the columns of
-         * 2026_02_23_232822_add_category_relation_to_documents_table and
-         * 2026_02_23_232921_add_download_count_to_documents_table could not be added yet.
-         * Create the table here, with the schema those migrations produce together, as
-         * soon as `document_categories` exists.
-         */
+        // On a fresh install the documents table is created later, complete.
         if (! Schema::hasTable('documents')) {
-            Schema::create('documents', function (Blueprint $table) {
-                $table->id();
-
-                $table->foreignId('document_category_id')
-                      ->constrained('document_categories')
-                      ->cascadeOnDelete();
-
-                $table->string('title');
-                $table->text('description')->nullable();
-                $table->string('file_path');
-                $table->string('file_name');
-                $table->string('file_extension', 20);
-                $table->integer('file_size');
-                $table->boolean('is_public')->default(false);
-                $table->unsignedBigInteger('download_count')->default(0);
-
-                $table->foreignId('uploaded_by')
-                      ->nullable()
-                      ->constrained('users')
-                      ->nullOnDelete();
-
-                $table->timestamps();
-            });
-
             return;
         }
 

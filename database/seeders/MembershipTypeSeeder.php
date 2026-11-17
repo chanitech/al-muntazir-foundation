@@ -10,10 +10,10 @@ class MembershipTypeSeeder extends Seeder
 {
     public function run()
     {
-        MembershipType::create([
-            'name'=>'Default Member',
-            'is_active'=>true
-        ]);
+        MembershipType::firstOrCreate(
+            ['name' => 'Default Member'],
+            ['is_active' => true]
+        );
     }
 }
 

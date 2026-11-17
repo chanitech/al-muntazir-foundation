@@ -8,6 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Already created (e.g. this migration was renamed after it ran): nothing to do.
+        if (Schema::hasTable('membership_types')) {
+            return;
+        }
+
         Schema::create('membership_types', function (Blueprint $table) {
             $table->id();
 

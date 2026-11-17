@@ -3,6 +3,7 @@
 @section('title', 'Member Registration Wizard')
 
 @section('content')
+<x-admin.flash />
 <div class="card">
     <div class="card-header bg-primary text-white">
         <h5 class="mb-0">Member Registration Wizard</h5>
@@ -38,7 +39,7 @@
         <select name="membership_type_id" class="form-control select2" required>
             <option value="">Select Type</option>
             @foreach($membershipTypes as $type)
-                <option value="{{ $type->id }}">{{ $type->name }}</option>
+                <option value="{{ $type->id }}" @selected(old('membership_type_id') == $type->id)>{{ $type->name }}</option>
             @endforeach
         </select>
     </div>
@@ -55,7 +56,7 @@
         <select name="role" class="form-control" required>
             <option value="">Select Role</option>
             @foreach($roles as $role)
-                <option value="{{ $role->name }}">{{ $role->name }}</option>
+                <option value="{{ $role->name }}" @selected(old('role', 'Member') === $role->name)>{{ $role->name }}</option>
             @endforeach
         </select>
     </div>
@@ -66,32 +67,32 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label>First Name <span class="text-danger">*</span></label>
-                            <input name="first_name" class="form-control" required>
+                            <input name="first_name" class="form-control" required value="{{ old('first_name') }}">
                         </div>
                         <div class="col-md-4">
                             <label>Middle Name <span class="text-danger">*</span></label>
-                            <input name="middle_name" class="form-control" required>
+                            <input name="middle_name" class="form-control" value="{{ old('middle_name') }}">
                         </div>
                         <div class="col-md-4">
                             <label>Last Name <span class="text-danger">*</span></label>
-                            <input name="last_name" class="form-control" required>
+                            <input name="last_name" class="form-control" required value="{{ old('last_name') }}">
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-6">
                             <label>Date of Birth<span class="text-danger">*</span></label>
-                            <input type="date" name="date_of_birth" class="form-control" required>
+                            <input type="date" name="date_of_birth" class="form-control" required value="{{ old('date_of_birth') }}">
                         </div>
                         <div class="col-md-6">
                             <label>Phone <span class="text-danger">*</span></label>
-                            <input name="phone" class="form-control" required>
+                            <input name="phone" class="form-control" required value="{{ old('phone') }}">
                         </div>
                     </div>
                     <div class="form-group mt-2">
                         <label>Email <span class="text-danger">*</span></label>
-                        <input name="email" class="form-control" required>
+                        <input name="email" class="form-control" required value="{{ old('email') }}">
                     </div>
-                    <div class="form-group"><label>National ID</label><input name="national_id" class="form-control"></div>
+                    <div class="form-group"><label>National ID</label><input name="national_id" class="form-control" value="{{ old('national_id') }}"></div>
                     <hr>
                     <h6>Current Address</h6>
                     <div class="row">
@@ -121,11 +122,11 @@
                         </div>
                         <div class="col-md-6">
                             <label>Village/Street</label>
-                            <input name="current_village" class="form-control">
+                            <input name="current_village" class="form-control" value="{{ old('current_village') }}">
                         </div>
                     </div>
                     <hr>
-                    <div class="form-group"><label>Permanent Address</label><textarea name="address" class="form-control"></textarea></div>
+                    <div class="form-group"><label>Permanent Address</label><textarea name="address" class="form-control">{{ old('address') }}</textarea></div>
                 </div>
 
                 {{-- STEP 3 Family --}}
@@ -135,19 +136,21 @@
                         <select name="marital_status_id" id="maritalStatus" class="form-control" onchange="toggleFamilyFields()">
                             <option value="">None</option>
                             @foreach($maritalStatuses as $status)
-                                <option value="{{ $status->id }}">{{ $status->name }}</option>
+                                <option value="{{ $status->id }}" data-married="{{ $status->isMarried() ? 1 : 0 }}" @selected(old('marital_status_id') == $status->id)>{{ $status->name }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div id="familyFields" style="display: none;">
+                        <div id="spouseFields">
                         <div class="row">
-                            <div class="col-md-4"><label>Spouse First Name</label><input name="spouse_first_name" class="form-control"></div>
-                            <div class="col-md-4"><label>Spouse Middle Name</label><input name="spouse_middle_name" class="form-control"></div>
-                            <div class="col-md-4"><label>Spouse Surname</label><input name="spouse_surname" class="form-control"></div>
+                            <div class="col-md-4"><label>Spouse First Name</label><input name="spouse_first_name" class="form-control" value="{{ old('spouse_first_name') }}"></div>
+                            <div class="col-md-4"><label>Spouse Middle Name</label><input name="spouse_middle_name" class="form-control" value="{{ old('spouse_middle_name') }}"></div>
+                            <div class="col-md-4"><label>Spouse Surname</label><input name="spouse_surname" class="form-control" value="{{ old('spouse_surname') }}"></div>
                         </div>
-                        <div class="form-group mt-2"><label>Spouse Phone</label><input name="spouse_phone" class="form-control"></div>
-                        <div class="form-group"><label>Children Count</label><input type="number" name="children_count" class="form-control" value="0"></div>
+                        <div class="form-group mt-2"><label>Spouse Phone</label><input name="spouse_phone" class="form-control" value="{{ old('spouse_phone') }}"></div>
+                        </div>
+                        <div class="form-group"><label>Children Count</label><input type="number" name="children_count" class="form-control" value="{{ old('children_count', 0) }}"></div>
                     </div>
                 </div>
 
@@ -175,13 +178,13 @@
                 <div class="tab-pane fade" id="step6">
                     <div class="form-group">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="is_employed" id="isEmployed" value="1" onclick="toggleEmployment()">
+                            <input class="form-check-input" type="checkbox" name="is_employed" id="isEmployed" value="1" onclick="toggleEmployment()" @checked(old('is_employed'))>
                             <label class="form-check-label" for="isEmployed">Currently Employed?</label>
                         </div>
                     </div>
                     <div id="employmentFields" style="display: none;">
-                        <div class="form-group"><label>Employer Name</label><input name="employer_name" class="form-control"></div>
-                        <div class="form-group"><label>Job Title</label><input name="job_title" class="form-control"></div>
+                        <div class="form-group"><label>Employer Name</label><input name="employer_name" class="form-control" value="{{ old('employer_name') }}"></div>
+                        <div class="form-group"><label>Job Title</label><input name="job_title" class="form-control" value="{{ old('job_title') }}"></div>
                         <div class="form-group"><label>Employment Status</label>
                             <select name="employment_status" class="form-control">
                                 <option value="">Select</option>
@@ -191,7 +194,7 @@
                                 <option value="intern">Intern</option>
                             </select>
                         </div>
-                        <div class="form-group"><label>Physical Address</label><textarea name="employer_address" class="form-control" rows="3"></textarea></div>
+                        <div class="form-group"><label>Physical Address</label><textarea name="employer_address" class="form-control" rows="3">{{ old('employer_address') }}</textarea></div>
                     </div>
                 </div>
 
@@ -218,6 +221,10 @@ function toggleFamilyFields() {
     var maritalStatus = document.getElementById('maritalStatus').value;
     var familyFields = document.getElementById('familyFields');
     familyFields.style.display = maritalStatus ? 'block' : 'none';
+    // Spouse details only apply to married members.
+    var select = document.getElementById('maritalStatus');
+    var option = select.options[select.selectedIndex];
+    document.getElementById('spouseFields').style.display = option && option.getAttribute('data-married') === '1' ? 'block' : 'none';
 }
 
 function toggleEmployment() {

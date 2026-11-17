@@ -1,25 +1,26 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-/*
- * Superseded by 2026_02_23_232921_create_document_categories_table, which creates
- * `document_categories` with its full schema. This early placeholder only created an id and
- * timestamps; running it on a fresh database would make that later migration a no-op
- * and leave the table without its real columns.
- *
- * Kept as a no-op (not deleted or renamed) because existing databases have it recorded
- * in their migrations table.
- */
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        //
+        // Superseded by 2026_02_23_232921_create_document_categories_table,
+        // which creates the complete table. Kept so existing databases that
+        // already recorded this migration stay consistent.
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        // The table is dropped by 2026_02_23_232921_create_document_categories_table.
+        Schema::dropIfExists('document_categories');
     }
 };
